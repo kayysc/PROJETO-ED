@@ -1,2 +1,4 @@
 # PROJETO-ED
-Aqui ficará todo o repositório das atualizações sempre que forem feitas
+Aqui ficará todo o repositório das atualizações, sempre que forem feitas
+
+Projeto focado em desenvolvimento com lingugem C
