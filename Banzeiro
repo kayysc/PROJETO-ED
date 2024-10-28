@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
+
+typedef struct {
+	char nome[30],funcao[20];
+ 	int cpf, cod;
+ 	float preco;
+
+} Funcionario;
+
+Funcionario func[3];
+
+
+int main(void){	
+	int x, i=0, j=0;
+	
+	printf("OLA, BEM VINDO(A)!\n");
+	
+	while(i == 0){
+	
+		printf("-------------Menu--------------\n");
+ 		printf(" _________________________________\n");
+ 		printf("|                                 |\n");
+ 		printf("|        (1)- Funcionario         |\n");
+ 		printf("|          (2)- Cliente           |\n");
+ 		printf("|          (3)- Gerente           |\n");
+ 		printf("|           (4)- Sair             |\n");
+ 		printf("|_________________________________|\n");
+ 		printf("Escolha uma das opcoes acima = ");
+ 		scanf("%d",&x);
+ 		system("CLS");
+ 	
+ 		if(x == 3){
+ 			int x, k = 0;
+ 			
+			while(k==0){
+				
+ 				printf("----------------Gerente--------------\n");
+	 			printf(" _____________________________________\n");
+ 				printf("|                                     |\n");
+	 			printf("|     (1)- Cadastrar Funcionario      |\n");
+ 				printf("|       (2)- Ver Funcionarios         |\n");
+ 				printf("|     (3)- Atualizar Funcionario      |\n");
+ 				printf("|      (4)- Demitir Funcionario       |\n");
+ 				printf("|                                     |\n");
+ 				printf("|         (5)- Inserir Barco          |\n");
+ 				printf("|           (6)- Ver Barcos           |\n");
+ 				printf("|         (7)- Excluir Barco          |\n");
+ 				printf("|             (8)- Voltar             |\n");
+ 				printf("|_____________________________________|\n");
+ 				printf("Escolha uma das opcoes acima = ");
+ 				scanf("%d",&x);
+ 				system("CLS");
+	
+ 			  
+				if(x == 1){
+ 					printf("---------Cadastrar Funcionario----------\n");
+ 					printf(" ________________________________________\n");
+ 					printf("|                                        \n");
+ 					printf("|  Digite nome do funcionario: ");
+ 					fflush(stdin);
+ 					gets(func[j].nome);
+ 					printf("|  Digite CPF do funcionario: ");
+ 					scanf("%d", &func[j].cpf);
+ 					printf("|  Digite codigo do funcionario: ");
+ 					scanf("%d", &func[j].cod);
+ 					printf("|  Digite funcao do funcionario: ");
+ 					fflush(stdin);
+ 					gets(func[j].funcao);
+ 					printf("|                                        \n");
+ 					printf("|________________________________________\n");
+ 					j++;
+					printf("\n\t\tCadastrado\n");
+ 					printf("\nPressione qualquer tecla para continuar");
+ 					system("pause > nul");
+ 					system("CLS");	
+	 			}
+	 			
+	 			if(x == 2){
+	 				int verif=0, h;
+	 				
+	 				printf("---------Ver Funcionarios----------\n");
+	 				for (j = 0; j < 3; j++) {
+        				printf(" ________________________________________\n");
+	 					printf("|                                        \n");
+ 						printf("|  Nome do funcionario: %s\n", func[j].nome);
+ 						printf("|  Digite CPF do funcionario: %d\n", func[j].cpf);
+	 					printf("|  Digite codigo do funcionario: %d\n", func[j].cod);
+ 						printf("|  Digite funcao do funcionario: %s\n", func[j].funcao);
+ 						printf("|________________________________________\n");
+    				}
+ 					printf("\nPressione qualquer tecla para continuar");
+ 					system("pause > nul");
+ 					system("CLS");
+	 			}
+	 			
+	 			if(x == 3){
+	 				int cod;
+	 				
+ 					printf("---------Atualizar Funcionario----------\n");
+ 					printf(" ________________________________________\n");
+ 					printf("|                                        \n");
+ 					printf("|  Digite o codigo do funcionario que deseja atualizar: ");
+ 					scanf("%d", &cod);
+ 					for (j = 0; j < 3; j++) {
+        				if (func[j].cod == cod) {
+			           		printf("|  Atualizando dados do cliente com codigo %d...\n", cod);
+ 							printf("|                                        \n");
+ 							printf("|  Digite nome do funcionario: ");
+		 					fflush(stdin);
+ 							gets(func[j].nome);
+ 							printf("|  Digite CPF do funcionario: ");
+		 					scanf("%d", &func[j].cpf);
+ 							printf("|  Digite codigo do funcionario: ");
+ 							scanf("%d", &func[j].cod);
+ 							printf("|  Digite funcao do funcionario: ");
+		 					fflush(stdin);
+ 							gets(func[j].funcao);
+ 							printf("|                                        \n");
+            				printf("|  Dados atualizados com sucesso!\n");
+ 							printf("|________________________________________\n");
+        				}				
+    				}
+					printf("\n\t\tAtualizado!\n");
+ 					printf("\nPressione qualquer tecla para continuar");
+ 					system("pause > nul");
+ 					system("CLS");
+	 			}
+	 			
+	 			if(x == 4){
+	 				int verif=0, cod, aux = 0;
+	 				char auxc[30] = {};
+	 				
+	 				printf("---------Demitir Funcionarios----------\n");
+	 				printf(" ________________________________________\n");
+ 					printf("|                                        \n");
+ 					printf("|  Digite o codigo do funcionario que deseja demitir: ");
+ 					scanf("%d", &cod);
+ 					for (j = 0; j < 3; j++) {
+        				if (func[j].cod == cod) {
+			           		printf("|  Retirando dados do cliente com codigo %d...\n", cod);
+ 							printf("|                                        \n");
+		 					func[j] = func[j+1];
+ 							printf("|                                        \n");
+            				printf("|  Dados retirados com sucesso!\n");
+ 							printf("|________________________________________\n");
+        				}				
+    				}
+					printf("\n\t\tRetirado!\n");
+ 					printf("\nPressione qualquer tecla para continuar");
+ 					system("pause > nul");
+ 					system("CLS");
+	 			}
+	 			
+	 			if(x == 8){
+ 					k++;
+	 			}
+	 		}
+	 	}
+ 		
+ 		if(x == 4){
+ 			i++;
+ 			printf("\n\t Menu fechado\n");
+ 			printf("\tMUITO OBRIGADO!\n");
+ 			system("pause > null");
+		}
+	}
+	return 0;
+}
