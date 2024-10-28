@@ -1,1 +1,167 @@
 // AQUI FICA O LOGIN
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+
+// aqui fica o registro para o usuário (funcionário ou gerente)
+typedef struct {
+    char nome[50];
+    char cargo[50]; // "funcionario" , "gerente", auxiliar administrativo
+    char login[30];
+    char senha[30];
+} Usuario;
+
+// Funções pré determinadas
+void menuPrincipal();
+void cadastrarUsuario();
+void loginUsuario();
+void recuperarSenha();
+void salvarUsuario(Usuario *usuario);
+int carregarUsuario(char *login, Usuario *usuario);
+
+int main() {
+	setlocale(LC_ALL,"portuguese");
+    menuPrincipal();
+    return 0;
+}
+
+// função menu principal
+void menuPrincipal() {
+    int opcao;
+    do {
+        printf("\n===== Sistema de Gerenciamento de Passagens Fluviais =====\n");
+        printf("1. Cadastrar Funcionário/Gerente\n");
+        printf("2. Login\n");
+        printf("3. Recuperar Senha\n");
+        printf("0. Sair\n");
+        printf("\n    Escolha uma opção: \n");
+        scanf("%d", &opcao);
+        getchar();  // para a limpeza do buffer do teclado
+
+		//aqui começa a magia do natal, vulgo fazer o que o usuário escolheu
+        switch (opcao) {
+            case 1:
+                cadastrarUsuario();
+                break;
+            case 2:
+                loginUsuario();
+                break;
+            case 3:
+                recuperarSenha();
+                break;
+            case 0:
+                printf("Encerrando o programa, até amanhã!\n");
+                exit(0);
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
+    } while (opcao != 0);
+}
+
+//aqui fica a unção para cadastrar um novo usuário
+void cadastrarUsuario() {
+    Usuario usuario;
+    printf("\n===== Cadastro de Usuario =====\n");
+    printf("Nome: ");
+    fgets(usuario.nome, 50, stdin);
+    usuario.nome[strcspn(usuario.nome, "\n")] = 0;
+	
+    printf("Cargo (funcionário/gerente): ");
+    fgets(usuario.cargo, 50, stdin);
+    usuario.cargo[strcspn(usuario.cargo, "\n")] = 0;
+	getchar();
+    printf("Login: ");
+    fgets(usuario.login, 30, stdin);
+    usuario.login[strcspn(usuario.login, "\n")] = 0;
+
+    printf("Senha: ");
+    fgets(usuario.senha, 30, stdin);
+    usuario.senha[strcspn(usuario.senha, "\n")] = 0;
+
+    salvarUsuario(&usuario);
+    printf("Cadastro realizado com sucesso!\n");
+    printf("\n\n Voltando a tela principal!\n");
+    system("pause");
+    system("cls");
+}
+
+// arquivos(autoexplicativo), salva em um arquivo .dat
+void salvarUsuario(Usuario *usuario) {
+    FILE *arquivo = fopen("usuarios.dat", "ab");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        exit(1);
+    }
+    fwrite(usuario, sizeof(Usuario), 1, arquivo);
+    fclose(arquivo);
+}
+
+// login com uma função
+void loginUsuario() {
+    char login[30], senha[30];
+    Usuario usuario;
+
+    printf("\n===== Login =====\n");
+    printf("Login: ");
+    fgets(login, 30, stdin);
+    login[strcspn(login, "\n")] = 0;
+
+    printf("Senha: ");
+    fgets(senha, 30, stdin);
+    senha[strcspn(senha, "\n")] = 0;
+
+    if (carregarUsuario(login, &usuario)) {
+        if (strcmp(usuario.senha, senha) == 0) {
+            printf("Bem-vindo, %s! (%s)\n", usuario.nome, usuario.cargo);
+            system("cls");
+        } else {
+            printf("Senha incorreta, tente novamente\n");
+            system("cls");
+        }
+    } else {
+        printf("Usuário não encontrado.\n");
+        system("cls");
+    }
+}
+
+// carrega um usuário dentro do arquivo dat
+int carregarUsuario(char *login, Usuario *usuario) {
+    FILE *arquivo = fopen("usuarios.dat", "rb");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return 0;
+    }
+
+    while (fread(usuario, sizeof(Usuario), 1, arquivo)) {
+        if (strcmp(usuario->login, login) == 0) {
+            fclose(arquivo);
+            return 1;
+        }
+    }
+
+    fclose(arquivo);
+    return 0;
+}
+
+// função que recupera a senha do esquecido
+void recuperarSenha() {
+    char login[30];
+    Usuario usuario;
+
+    printf("\n===== Recuperar Senha =====\n");
+    printf("Informe o login: ");
+    fgets(login, 30, stdin);
+    login[strcspn(login, "\n")] = 0;
+
+    if (carregarUsuario(login, &usuario)) {
+        printf("A senha do usuario %s e: %s\n", usuario.nome, usuario.senha);
+        system("pause");
+        system("cls");
+    } else {
+        printf("Usuario nao encontrado.\n");
+        printf("Voltando a tela principal.\n");
+        system("pause");
+        system("cls");
+    }
+}
