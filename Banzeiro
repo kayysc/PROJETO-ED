@@ -438,11 +438,9 @@ int main(void){
  		
  		switch (esclh){
  			
- 			case 1:
-                //clientes = adicionar_cliente(clientes, &n);
+ 		case 1:
                 break;
             case 2:
-               // exibir_clientes(clientes, n);
                 break;
             case 3:
                 menu_gerente();
