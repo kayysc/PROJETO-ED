@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+
+#define TAM 5 // capacidade/assentos do barco
+#define PASSAGENS 3 //Quantas passagens o usuario selecionou, será definida antes dessa página
+
+void selecionar(int *m, int i, int j) {
+    int caso;
+
+    while (1) {
+        printf("-----------------------\n");
+        printf("| 1. Continuar Seleção |\n");
+        printf("| 2. Excluir última seleção |\n");
+        printf("-----------------------\n");
+        scanf("%d", &caso);
+
+        if (caso == 1) {
+            return; // Retorna para a seleção de assentos
+        } else if (caso == 2) {
+            m[j] = 1; // Libera o assento
+            printf("Assento excluído da seleção.\n");
+            // Falta cont -= cont aqui, quando coloco da  erro
+            return; // Retorna para a seleção de assentos
+        } else {
+            printf("Opção inválida! Tente novamente.\n");
+        }
+    }
+}
+int main(){
+    setlocale(LC_ALL, "Portuguese");
+
+    int m[TAM][TAM], i, j, cont, caso;
+    int *ptr_i, *ptr_j; //Definindo ponteiros
+    int (*ptr_m)[TAM] = m; //Definindo ponteiros
+
+    ptr_i = &i;
+    ptr_j = &j;
+    //Valor 1 == assento disponível, valor 0 == assento não disponivel
+    for(i=0; i<TAM; i++){
+        for(j=0; j<TAM; j++){
+            ptr_m[i][j] = 1; //alocando valor 1 em todos indices
+        }
+    } //Solução acima possivelmente provisória
+
+    for(cont=0; cont<PASSAGENS; cont++){
+        printf("-----------------------\n");
+        printf("| Seleção de assentos |\n"); //Utilizei assentos pois não achei um termo melhor
+        printf("-----------------------\n");
+        printf("Escolha o seu lugar(maximo de 3 lugareas por usuário)\n");
+        for(i=0; i<TAM; i++){
+            for(j=0; j<TAM; j++){
+                printf("[%d] ", ptr_m[i][j]);// mostra matriz na tela
+            }
+            printf("\n");
+        }
+
+        scanf("%d %d", ptr_i, ptr_j);//Seleção do assento
+        fflush(stdin);
+
+        if(*ptr_i >= TAM || *ptr_i >= TAM){//Verifica caso usuário coloque assento não disponível
+            printf("Opção inválida! Tente novamente\n" );
+            cont -= cont;//Garante que usuário sempre selecione assento para cada passagen, nesse caso 3
+        }else{
+            if(ptr_m[i][j] == 1){
+                ptr_m[i][j] = 0;//Vaga selecionada
+                system("cls");
+                selecionar(m[i], i, j); // Tabela se continua ou exclui a ultima seleção
+            }else{
+                printf("O lugar já está reservado\n");//Caso selecione lugar já reservado
+                cont -= cont;
+                system("pause");
+            }
+        }
+        system("cls");
+    }
+    printf("-----------------------\n");
+    printf("| Lugares reservados |\n");//Final
+    printf("-----------------------\n");
+    return 0;
+}
+
