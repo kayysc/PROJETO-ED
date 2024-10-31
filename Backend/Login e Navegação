@@ -194,8 +194,8 @@ int main() {
     setlocale(LC_ALL, "Portuguese");
     SetConsoleTitle("BANZEIRO");
 
-    Usuario gerente = {"Ana Conda", "admin", "1234", "Gerente"};
-    Usuario funcionario = {"João de Deus", "func", "abcd", "Funcionário"};
+    Usuario gerente = {"Ana Julieta", "admin", "1234", "Gerente"};
+    Usuario funcionario = {"João de Barro Santos", "func", "abcd", "Funcionário"};
     salvarUsuario("admin", &gerente);
     salvarUsuario("func", &funcionario);
 
