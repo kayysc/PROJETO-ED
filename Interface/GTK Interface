@@ -1,1 +1,146 @@
+#include <gtk/gtk.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
+GtkWidget *window;
+GtkBuilder *builder;
+GtkStack *stack;
+GtkListStore *modelo_armazenamento;
+
+typedef struct usuario {
+    int id;
+    char nome[100];
+    char cpf[12];
+    char funcao[100];
+    struct usuario *proximo;
+} user;
+
+int id = 0;
+user *cabecalho_user;
+user *proximo_user;
+
+void on_main_window_destroy(GtkWidget *Widget, gpointer data) {
+    gtk_main_quit();
+}
+
+void mensagem(const char *text, const char *secondary_text, const char *icon_name) {
+    GtkMessageDialog *mensagem_dialogo = GTK_MESSAGE_DIALOG(gtk_message_dialog_new(GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", text));
+    gtk_message_dialog_format_secondary_text(mensagem_dialogo, "%s", secondary_text);
+    gtk_window_set_icon_name(GTK_WINDOW(mensagem_dialogo), icon_name);
+
+    gtk_widget_show_all(GTK_WIDGET(mensagem_dialogo)); // Mostra na tela
+    gtk_dialog_run(GTK_DIALOG(mensagem_dialogo)); // Aguarda o usuário dar um click
+    gtk_widget_destroy(GTK_WIDGET(mensagem_dialogo)); // Libera a memória após o uso
+}
+
+void on_butao_cadastrar_clicked(GtkWidget *Widget, gpointer data) {
+    gtk_stack_set_visible_child_name(stack, "view_cadastro");
+}
+
+void on_butao_funcionario_clicked(GtkWidget *Widget, gpointer data) {
+    gtk_stack_set_visible_child_name(stack, "view_listar");
+}
+
+void on_botao_cad_voltar_clicked(GtkWidget *Widget, gpointer data) {
+    gtk_stack_set_visible_child_name(stack, "view_login");
+}
+
+void on_botao_cadastrar_clicked(GtkWidget *Widget, gpointer data) {
+    GtkEntry *entry_nome = GTK_ENTRY(gtk_builder_get_object(builder, "cad_nome"));
+    GtkEntry *entry_cpf = GTK_ENTRY(gtk_builder_get_object(builder, "cad_cpf"));
+    GtkEntry *entry_funcao = GTK_ENTRY(gtk_builder_get_object(builder, "cad_funcao"));
+
+    const char *cad_nome = gtk_entry_get_text(entry_nome);
+    const char *cad_cpf = gtk_entry_get_text(entry_cpf);
+    const char *cad_funcao = gtk_entry_get_text(entry_funcao);
+
+    if (strcmp(cad_nome, "") == 0) {
+        mensagem("Aviso", "Campo 'Nome' obrigatório", "dialog-error");
+    } else {
+        id++;
+        proximo_user->id = id;
+        strcpy(proximo_user->nome, cad_nome);
+        strcpy(proximo_user->cpf, cad_cpf);
+        strcpy(proximo_user->funcao, cad_funcao);
+
+        g_print("id: %d\nnome: %s\ncpf: %s\nfuncao: %s\n", proximo_user->id, proximo_user->nome, proximo_user->cpf, proximo_user->funcao);
+
+        char texto[100];
+        g_snprintf(texto,100, "%s%s%s", "Usuario ", proximo_user->nome, " cadastrado com sucesso!");
+        mensagem("Aviso", texto, "dialog-emblem-default");
+
+        proximo_user->proximo = (user *)malloc(sizeof(user));
+        proximo_user = proximo_user->proximo;
+        proximo_user->proximo = NULL; // Previne acesso indevido
+    }
+}
+
+void on_butao_listar_voltar_clicked(GtkWidget *Widget, gpointer data) {
+    gtk_stack_set_visible_child_name(stack, "view_login");
+}
+
+void on_butao_listar_clicked(GtkWidget *Widget, gpointer data) {
+
+   proximo_user-> proximo= NULL;
+   proximo_user = cabecalho_user;
+
+   GtkTreeIter iter;
+   gtk_list_store_clear(modelo_armazenamento);
+
+   while(proximo_user-> proximo != NULL){
+   g_print("id: %d\nnome: %s\ncpf: %s\nfuncao: %s\n", proximo_user->id, proximo_user->nome, proximo_user->cpf, proximo_user->funcao);
+
+     gtk_list_store_append(modelo_armazenamento, &iter);
+     gtk_list_store_set(modelo_armazenamento, &iter,
+                        0, proximo_user->id,
+                        1, proximo_user->nome,
+                        2, proximo_user->cpf,
+                        3, proximo_user->funcao,
+                        -1);
+
+     proximo_user = proximo_user->proximo;
+
+   }
+}
+
+int main(int argc, char *argv[]) {
+    cabecalho_user = (user *)malloc(sizeof(user));
+    proximo_user = cabecalho_user;
+    proximo_user->proximo = NULL; // Inicializa a lista como vazia
+
+    gtk_init(&argc, &argv);
+
+    builder = gtk_builder_new_from_file("cadastro.glade");
+
+    gtk_builder_add_callback_symbols(
+        builder,
+        "on_butao_cadastrar_clicked", G_CALLBACK(on_butao_cadastrar_clicked),
+        "on_main_window_destroy", G_CALLBACK(on_main_window_destroy),
+        "on_butao_funcionario_clicked", G_CALLBACK(on_butao_funcionario_clicked),
+        "on_botao_cad_voltar_clicked", G_CALLBACK(on_botao_cad_voltar_clicked),
+        "on_botao_cadastrar_clicked", G_CALLBACK(on_botao_cadastrar_clicked),
+        "on_butao_listar_voltar_clicked", G_CALLBACK(on_butao_listar_voltar_clicked),
+        "on_butao_listar_clicked", G_CALLBACK(on_butao_listar_clicked),
+        NULL);
+
+    gtk_builder_connect_signals(builder, NULL);
+
+    stack = GTK_STACK(gtk_builder_get_object(builder, "stack"));
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+    modelo_armazenamento= GTK_LIST_STORE(gtk_builder_get_object(builder, "liststore1"));
+
+
+    gtk_widget_show_all(window);
+    gtk_main();
+
+    // Liberação de memória
+    user *temp;
+    while (cabecalho_user != NULL) {
+        temp = cabecalho_user;
+        cabecalho_user = cabecalho_user->proximo;
+        free(temp);
+    }
+
+    return 0;
+}
