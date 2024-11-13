@@ -1,49 +1,506 @@
-#include <stdio.h>
+#include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
 #include <conio.h>
 
-typedef struct Funcionario {
+typedef struct {
     char nome[50];
     char usuario[20];
     char senha[20];
     char cargo[20];
     int cod, cpf;
-    struct Funcionario *prox; // Ponteiro para o próximo funcionário na lista
 } Funcionario;
 
-typedef struct Barco {
-    char nome[50], trajet[20], tipo[100];
-    int num, cabin;
-    float preco;
-    struct Barco *prox; // Ponteiro para o próximo barco na lista
+typedef struct {
+	char nome[50], trajet[20], tipo[100];
+ 	int num, cabin;
+ 	float preco;
+
 } Barco;
 
-// Função para adicionar um novo funcionário ao início da lista
-Funcionario* cadas_funcis(Funcionario *head, int *n) {
-    setlocale(LC_ALL, "Portuguese");
-    (*n)++;
+void salvarFuncionario(const char *arquivo, Funcionario *usuario) {
+    FILE *fp = fopen(arquivo, "wb");
+    if (fp) {
+        fwrite(usuario, sizeof(Funcionario), 1, fp);
+        fclose(fp);
+    }
+}
 
-    Funcionario *novo_funcis = (Funcionario*)malloc(sizeof(Funcionario));
-    if (novo_funcis == NULL) {
+int carregarFuncionario(const char *arquivo, Funcionario *usuario) {
+    FILE *fp = fopen(arquivo, "rb");
+    if (fp) {
+        fread(usuario, sizeof(Funcionario), 1, fp);
+        fclose(fp);
+        return 1; 
+    }
+    return 0; 
+}
+
+Funcionario* cadas_funcis(Funcionario *funcis, int *n){
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	(*n)++;
+    funcis = (Funcionario*)realloc(funcis, (*n) * sizeof(Funcionario));
+    if (funcis == NULL) {
         printf("Erro ao alocar memória\n");
         exit(1);
     }
-    novo_funcis->cod = *n;
 
-    printf(" =========Cadastrar Funcionário=========\n");
+    Funcionario novo_funcis;
+    novo_funcis.cod = *n;
+    
+	printf(" =========Cadastrar Funcionário=========\n");
+	printf(" ________________________________________\n");
+	printf("|                                        \n");
+	printf("|  Digite nome do funcionário: ");
+	getchar();
+	fflush(stdin);
+	fgets(novo_funcis.nome, 50, stdin);
+	novo_funcis.nome[strcspn(novo_funcis.nome, "\n")] = 0;
+	printf("|  Digite CPF do funcionário: ");
+	scanf("%d", &novo_funcis.cpf);
+	printf("|  Digite função do funcionário: ");
+	getchar();
+	fflush(stdin);
+	fgets(novo_funcis.cargo, 20, stdin);
+	novo_funcis.cargo[strcspn(novo_funcis.cargo, "\n")] = 0;
+	printf("|                                        \n");
+	printf("|________________________________________\n");
+	funcis[(*n) - 1] = novo_funcis;
+	printf("\n\t\tCadastrado\n");
+	printf("\nPressione qualquer tecla para continuar");
+	system("pause > nul");
+	system("CLS");
+ 						
+	return funcis;
+}
+
+void ver_funcis(Funcionario *funcis, int n) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	int i;
+	
+	printf("==============Ver Funcionários==============\n");
+	
+    if (n == 0) {
+        printf("\n\tNenhum funcionário cadastrado.\n");
+        printf("\nPressione qualquer tecla para continuar");
+		system("pause > nul");
+		system("CLS");
+        return;
+    }
+    
+    for (i = 0; i < n; i++) {
+		printf(" ________________________________________\n");
+		printf("|                                        \n");
+		printf("|  Nome do funcionário: %s\n", funcis[i].nome);
+		printf("|  CPF do funcionário: %d\n", funcis[i].cpf);
+		printf("|  Codigo do funcionário: %d\n", funcis[i].cod);
+		printf("|  Função do funcionário: %s\n", funcis[i].cargo);
+		printf("|________________________________________\n");	   
+    }
+    
+    printf("\nPressione qualquer tecla para continuar");
+	system("pause > nul");
+	system("CLS");
+}
+
+void atual_funcis(Funcionario *funcis, int n) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	int cod, i;
+	
+	printf("================Atualizar Funcionário================\n");
+	
+    if (n == 0) {
+        printf("\n\tNenhum funcionário cadastrado.\n");
+        printf("\nPressione qualquer tecla para continuar");
+		system("pause > nul");
+		system("CLS");
+        return;
+    }
+    
+    printf("\nDigite o código do funcionário que deseja atualizar: ");
+    scanf("%d", &cod);
+
+    for (i = 0; i < n; i++) {
+        if (funcis[i].cod == cod) {
+            printf("\nAtualizando dados do funcionário com código %d...\n", cod);
+            printf(" ________________________________________\n");
+			printf("|                                        \n");
+			printf("|  Atualize o nome do funcionário: ");
+			getchar();
+			fflush(stdin);
+			fgets(funcis[i].nome, 50, stdin);
+			funcis[i].nome[strcspn(funcis[i].nome, "\n")] = 0;
+			printf("|  Atualize o CPF do funcionário: ");
+			scanf("%d", &funcis[i].cpf);
+			printf("|  Atualize a função do funcionário: ");
+			getchar();
+			fflush(stdin);
+			fgets(funcis[i].cargo, 20, stdin);
+			funcis[i].cargo[strcspn(funcis[i].cargo, "\n")] = 0;
+			printf("|                                        \n");
+			printf("|      Dados atualizados com sucesso!\n");
+			printf("|________________________________________\n");
+			printf("\n\t\tAtualizado!\n");
+			printf("\nPressione qualquer tecla para continuar");
+ 			system("pause > nul");
+ 			system("CLS");
+	
+            return;
+        }
+    }
+    printf("Funcionário com código %d não encontrado.\n", cod);
+    printf("\nPressione qualquer tecla para continuar");
+ 	system("pause > nul");
+ 	system("CLS");
+}
+
+Funcionario* demit_funcis(Funcionario *funcis, int *n) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	int cod, i, j;
+	
+	printf("=============Demitir Funcionários=============\n");
+	
+    if (*n == 0) {
+        printf("\n\tNenhum funcionário cadastrado.\n");
+        printf("\nPressione qualquer tecla para continuar");
+		system("pause > nul");
+		system("CLS");
+        return funcis;
+    }
+
     printf(" ________________________________________\n");
-    printf("|                                        \n");
-    printf("|  Digite nome do funcionário: ");
-    getchar();
-    fflush(stdin);
-    fgets(novo_funcis->nome, 50, stdin);
-    novo_funcis->nome[strcspn(novo_funcis->nome, "\n")] = 0;
-    printf("|  Digite CPF do funcionário: ");
-    scanf("%d", &novo_funcis->cpf);
-    printf("|  Digite função do funcionário: ");
-    getchar();
-    fflush(stdin);
-    fgets(novo_funcis->cargo, 20, stdin);
-    novo_funcis->cargo[strcspn(novo_funcis->cargo, "\n
+	printf("|                                        \n");
+ 	printf("|  Digite o código do funcionário que deseja demitir: ");
+ 	scanf("%d", &cod);
+
+    for (i = 0; i < *n; i++) {
+        if (funcis[i].cod == cod) {
+        	printf("|  Demitindo funcionário com código %d...\n", cod);
+        	
+			for (j = i; j < *n - 1; j++) {
+                funcis[j] = funcis[j + 1];
+            }
+            (*n)--;
+            
+            funcis = (Funcionario*)realloc(funcis, (*n) * sizeof(Funcionario));
+			printf("|                                        \n");
+			printf("|  Dados retirados com sucesso!\n");
+			printf("|________________________________________\n");
+			
+			printf("\n\t\tRetirado!\n");
+			
+            printf("\n\tFuncionário demitido com sucesso!\n\n");
+            printf("\nPressione qualquer tecla para continuar");
+			system("pause > nul");
+			system("CLS");
+            
+            return funcis;
+        }
+    }
+    printf("\n\tFuncionário com código %d não encontrado.\n", cod);
+    
+    printf("\nPressione qualquer tecla para continuar");
+	system("pause > nul");
+	system("CLS");
+	
+    return funcis;
+}
+
+Barco* inser_barcos(Barco *barcos, int *m){
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	(*m)++;
+    barcos = (Barco*)realloc(barcos, (*m) * sizeof(Barco));
+    if (barcos == NULL) {
+        printf("Erro ao alocar memória\n");
+        exit(1);
+    }
+
+    Barco novo_barcos;
+    novo_barcos.num = *m;
+    
+	printf("=============Inserir Barco=============\n");
+	printf(" ________________________________________\n");
+	printf("|                                        \n");
+	printf("|  Digite o nome do barco: ");
+	getchar();
+	fgets(novo_barcos.nome, 30, stdin);
+	novo_barcos.nome[strcspn(novo_barcos.nome, "\n")] = 0;
+	printf("|  Digite a quatidades de cabines: ");
+	scanf("%d", &novo_barcos.cabin);
+	printf("|  Digite o trajeto do barco: ");
+	getchar();
+	fgets(novo_barcos.trajet, 50, stdin);
+	novo_barcos.trajet[strcspn(novo_barcos.trajet, "\n")] = 0;
+	printf("|  Digite o valor das passagens do barco: ");
+	scanf("%f", &novo_barcos.preco);
+	printf("|  Digite o tipo do barco: ");
+	getchar();
+	fgets(novo_barcos.tipo, 100, stdin);
+	novo_barcos.tipo[strcspn(novo_barcos.tipo, "\n")] = 0;
+	printf("|                                        \n");
+	printf("|________________________________________\n");
+	barcos[(*m) - 1] = novo_barcos;
+	printf("\n\t\tCadastrado\n");
+	printf("\nPressione qualquer tecla para continuar");
+	system("pause > nul");
+	system("CLS");
+ 						
+	return barcos;
+}
+
+void ver_barcos(Barco *barcos, int m) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	int i;
+	
+	printf("===============Ver Barcos===============\n");
+	
+    if (m == 0) {
+        printf("\n\tNenhum barco cadastrado.\n");
+        printf("\nPressione qualquer tecla para continuar");
+		system("pause > nul");
+		system("CLS");
+        return;
+    }
+    
+    for (i = 0; i < m; i++) {
+		printf(" ________________________________________\n");
+		printf("|                                        \n");
+		printf("|  Nome do barco: %s\n", barcos[i].nome);
+		printf("|  Trajeto do barco: %s\n", barcos[i].trajet);
+		printf("|  Tipo do barco: %s\n", barcos[i].tipo);
+		printf("|  Número de cabines do barco: %d\n", barcos[i].cabin);
+		printf("|  Número do barco: %d\n", barcos[i].num);
+		printf("|  Preço das passagens do barco: R$ %.2f\n", barcos[i].preco);
+		printf("|________________________________________\n");	   
+    }
+    
+    printf("\nPressione qualquer tecla para continuar");
+	system("pause > nul");
+	system("CLS");
+}
+
+void atual_barcos(Barco *barcos, int m) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	
+	int num, i;
+	
+	printf("=============Atualizar Barco=============\n");
+	
+    if (m == 0) {
+        printf("\n\tNenhum barco cadastrado.\n");
+        printf("\nPressione qualquer tecla para continuar");
+		system("pause > nul");
+		system("CLS");
+        return;
+    }
+    
+    printf("\nDigite o número do barco que deseja atualizar: ");
+    scanf("%d", &num);
+
+    for (i = 0; i < m; i++) {
+        if (barcos[i].num == num) {
+            printf("\nAtualizando dados do funcionário com código %d...\n", num);
+            printf(" ________________________________________\n");
+			printf("|                                        \n");
+			printf("|  Atualize o nome do barco: ");
+			getchar();
+			fgets(barcos[i].nome, 30, stdin);
+			barcos[i].nome[strcspn(barcos[i].nome, "\n")] = 0;
+			printf("|  Atualize a quatidades de cabines: ");
+			scanf("%d", &barcos[i].cabin);
+			printf("|  Atualize o trajeto do barco: ");
+			getchar();
+			fgets(barcos[i].trajet, 50, stdin);
+			barcos[i].trajet[strcspn(barcos[i].trajet, "\n")] = 0;
+			printf("|  Atualize o valor das passagens do barco: ");
+			scanf("%f", &barcos[i].preco);
+			printf("|  Atualize o tipo do barco: ");
+			getchar();
+			fgets(barcos[i].tipo, 100, stdin);
+			barcos[i].tipo[strcspn(barcos[i].tipo, "\n")] = 0;
+			printf("|                                        \n");
+			printf("|    Dados atualizados com sucesso!\n");
+			printf("|________________________________________\n");
+			printf("\n\t\tAtualizado!\n");
+			printf("\nPressione qualquer tecla para continuar");
+ 			system("pause > nul");
+ 			system("CLS");
+	
+            return;
+        }
+    }
+    printf("\n\tBarco com número %d não encontrado.\n", num);
+    printf("\nPressione qualquer tecla para continuar");
+ 	system("pause > nul");
+ 	system("CLS");
+}
+
+Barco* deletar_barcos(Barco *barcos, int *m) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
+	
+	int num, i, j;
+	
+	printf("=============Excluir Barco=============\n");
+	
+    if (*m == 0) {
+        printf("\n\tNenhum barco cadastrado.\n");
+        printf("\nPressione qualquer tecla para continuar");
+		system("pause > nul");
+		system("CLS");
+        return barcos;
+    }
+
+    printf(" ________________________________________\n");
+	printf("|                                        \n");
+ 	printf("|  Digite o número do barco que deseja retirar: ");
+ 	scanf("%d", &num);
+
+    for (i = 0; i < *m; i++) {
+        if (barcos[i].num == num) {
+        	printf("|  Retirando barco com código %d...\n", num);
+        	
+			for (j = i; j < *m - 1; j++) {
+                barcos[j] = barcos[j + 1];
+            }
+            (*m)--;
+            
+            barcos = (Barco*)realloc(barcos, (*m) * sizeof(Barco));
+			printf("|                                        \n");
+			printf("|  Dados retirados com sucesso!\n");
+			printf("|________________________________________\n");
+			
+			printf("\n\t\tRetirado!\n");
+			
+            printf("\n\tFuncionário demitido com sucesso!\n\n");
+            printf("\nPressione qualquer tecla para continuar");
+			system("pause > nul");
+			system("CLS");
+            
+            return barcos;
+        }
+    }
+    printf("\n\tBarco com número %d não encontrado.\n", num);
+    
+    printf("\nPressione qualquer tecla para continuar");
+	system("pause > nul");
+	system("CLS");
+	
+    return barcos;
+}
+
+void menuGerente() {
+	setlocale(LC_ALL, "Portuguese");
+	SetConsoleTitle("BANZEIRO - GERENTE");
+	Barco *barcos = NULL;
+	Funcionario *funcis = NULL;
+	int n = 0, m = 0, opcao=0;
+    do {
+    	system("cls");
+    	printf(" ===============Gerente===============\n");
+	 	printf(" _____________________________________\n");
+ 		printf("|                                     |\n");
+	 	printf("|     (1)- Cadastrar Funcionário      |\n");
+ 		printf("|       (2)- Ver Funcionários         |\n");
+ 		printf("|     (3)- Atualizar Funcionário      |\n");
+ 		printf("|      (4)- Demitir Funcionário       |\n");
+ 		printf("|                                     |\n");
+ 		printf("|         (5)- Inserir Barco          |\n");
+ 		printf("|           (6)- Ver Barcos           |\n");
+		printf("|        (7)- Atualizar Barco         |\n");
+ 		printf("|         (8)- Excluir Barco          |\n");
+ 		printf("|                                     |\n");
+ 		printf("|              (0)- Sair              |\n");
+	 	printf("|_____________________________________|\n");
+ 		printf("\n   Escolha uma das opcoes acima = ");
+ 		scanf("%d", &opcao);		
+ 					
+        switch (opcao) {
+            case 1:
+                printf("\n\nCadastrando Funcionário...\n");
+                funcis = cadas_funcis(funcis, &n);
+                break;
+            case 2:
+                printf("Listando Funcionários...\n");
+                ver_funcis(funcis, n);
+                break;
+            case 3:
+                printf("Atualizando Funcionário...\n");
+                atual_funcis(funcis, n);
+                break;
+            case 4:
+                printf("Excluindo Funcionário...\n");
+                funcis = demit_funcis(funcis, &n);
+                break;
+            case 5:
+                printf("Cadastrando Embarcação...\n");
+                barcos = inser_barcos(barcos, &m);
+                break;
+            case 6:
+                printf("Listando Embarcações...\n");
+                ver_barcos(barcos, m);
+                break;
+            case 7:
+                printf("Atualizando Embarcação...\n");
+                atual_barcos(barcos, m);
+			    break;
+            case 8:
+                printf("Excluindo Embarcação...\n");
+                barcos = deletar_barcos(barcos, &m);
+                break;
+			case 0:
+                system("cls");
+                break;
+
+			default: printf("Opção inválida!\n");
+        }
+    } while (opcao != 0);
+}
+
+int main(void){	
+	int esclh;
+	
+	printf("\tOLA, BEM VINDO(A)!\n\n");
+	
+	do{
+		printf("---------------Menu--------------\n");
+ 		printf(" _________________________________\n");
+ 		printf("|                                 |\n");
+ 		printf("|        (1)- Funcionário         |\n");
+ 		printf("|          (2)- Cliente           |\n");
+ 		printf("|          (3)- Gerente           |\n");
+ 		printf("|           (4)- Sair             |\n");
+ 		printf("|_________________________________|\n");
+ 		printf("\n Escolha uma das opções acima = ");
+ 		scanf("%d", &esclh);
+ 		system("CLS");
+ 		
+ 		switch (esclh){
+ 			
+ 			case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                menu_gerente();
+                break;
+            case 4:
+                printf("\n\t Menu fechado\n");
+ 				printf("\tMUITO OBRIGADO!\n");
+ 				system("pause > null");
+                break;
+            default:
+                printf("Opção inválida.\n");
+        }
+    } while (esclh != 4);
+ 				
+	return 0;
+}
