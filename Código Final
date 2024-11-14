@@ -18,7 +18,7 @@
 
 typedef struct {
 	char nome[50], trajet[20], tipo[100];
- 	int num, cabin;
+ 	int num, cabin, assent;
  	float preco;
 
 } Barco;
@@ -120,9 +120,6 @@ void animacaoBarco() {
     printf("\nBarco pronto para embarque!\n");
     SLEEP(1500);
 }
-
-
-
 
 
 // Menus para Gerente e Funcionário
@@ -376,6 +373,8 @@ Barco* inser_barcos(Barco *barcos, int *m){
 	novo_barcos.nome[strcspn(novo_barcos.nome, "\n")] = 0;
 	printf("|  Digite a quatidades de cabines: ");
 	scanf("%d", &novo_barcos.cabin);
+	printf("|  Digite o número de assentos do barco: ");
+	scanf("%d", &novo_barcos.assent);
 	printf("|  Digite o trajeto do barco: ");
 	getchar();
 	fgets(novo_barcos.trajet, 50, stdin);
@@ -393,6 +392,8 @@ Barco* inser_barcos(Barco *barcos, int *m){
 	printf("\nPressione qualquer tecla para continuar");
 	system("pause > nul");
 	system("CLS");
+ 						
+ 						
  						
 	return barcos;
 }
@@ -419,6 +420,7 @@ void ver_barcos(Barco *barcos, int m) {
 		printf("|  Trajeto do barco: %s\n", barcos[i].trajet);
 		printf("|  Tipo do barco: %s\n", barcos[i].tipo);
 		printf("|  Número de cabines do barco: %d\n", barcos[i].cabin);
+		printf("|  Número de assentos do barco: %d\n", barcos[i].assent);
 		printf("|  Número do barco: %d\n", barcos[i].num);
 		printf("|  Preço das passagens do barco: R$ %.2f\n", barcos[i].preco);
 		printf("|________________________________________\n");	   
@@ -459,6 +461,8 @@ void atual_barcos(Barco *barcos, int m) {
 			barcos[i].nome[strcspn(barcos[i].nome, "\n")] = 0;
 			printf("|  Atualize a quatidades de cabines: ");
 			scanf("%d", &barcos[i].cabin);
+			printf("|  Atualize o número de assentos do barco: ");
+			scanf("%d", &novo_barcos.assent);
 			printf("|  Atualize o trajeto do barco: ");
 			getchar();
 			fgets(barcos[i].trajet, 50, stdin);
@@ -539,7 +543,6 @@ Barco* deletar_barcos(Barco *barcos, int *m) {
 	
     return barcos;
 }
-
 
 
 // Menu do Gerente
