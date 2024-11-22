@@ -1,199 +1,258 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
-int prox_id= 1;
+int prox_id = 1;
 
-struct endereco{
-
-	char cep[9];
-	char rua[50];
-	char numero[10];
-	char bairro[50];
-	char cidade[50];
-	char estado[50];	
-}; 
-
-struct cliente{
-	
-	int id;
-	char nome[50];
-	char cpf[11];
-	char data_nasc[20];
-	struct endereco end;
-	char email[50];
-	char telefone[20];
-	struct cliente *proximo_cl;// aponta para um novo cliente, permitindo uma lista encadeada
-};  
-
-struct embarcacao{
-	char nome[50];
-	char tipo[50];
-	int capacidade;
-	struct embarcacao *proximo_em;//aponta para uma nova embarcaco
+struct endereco {
+    char cep[9];
+    char rua[50];
+    char numero[10];
+    char bairro[50];
+    char cidade[50];
+    char estado[50];
 };
 
+struct cliente {
+    int id;
+    char nome[50];
+    char cpf[15]; 
+    char data_nasc[11]; 
+    struct endereco end;
+    char email[50];
+    char telefone[20];
+    struct cliente *proximo_cl; // Lista encadeada
+};
 
-void cadastrar_cl(struct cliente **head){// o 'head' é um ponteiro para o primeiro cliente da lista, mas como passamos ele como '**head', 
-//ele sera atualizado pela funcao e o ponteiro apontara para o novo cliente
-	struct cliente *novo_cl = (struct cliente*) malloc(sizeof(struct cliente));// '*novo_cl' recebe novo espaco na memoria 
-	novo_cl->id = prox_id++;
+// validar e formatar CPF
+void formatar_cpf(char *cpf) {
+    char temp[12];
+    int j = 0;
 
-	printf("Nome: ");
-	fflush(stdin);
-	fgets(novo_cl->nome,50,stdin);
-	
-	printf("CPF: ");
-	fflush(stdin);
-	fgets(novo_cl->cpf,11,stdin);
-	
-	printf("Data de Nascimento: ");
-	fflush(stdin);
-	fgets(novo_cl->data_nasc,20,stdin);
-	
-	printf("CEP: ");
-	fflush(stdin);
-	fgets(novo_cl->end.cep,9,stdin);
-	
-	printf("Rua: ");
-	fflush(stdin);
-	fgets(novo_cl->end.rua,50,stdin);
-	
-	printf("Numero: ");
-	fflush(stdin);
-	fgets(novo_cl->end.numero,10,stdin);
-	
-	printf("Bairro: ");
-	fflush(stdin);
-	fgets(novo_cl->end.bairro,50,stdin);
-	
-	printf("Cidade: ");
-	fflush(stdin);
-	fgets(novo_cl->end.cidade,50,stdin);
-	
-	printf("Estado: ");
-	fflush(stdin);
-	fgets(novo_cl->end.estado,50,stdin);
-	
-	printf("E-mail: ");
-	fflush(stdin);
-	fgets(novo_cl->email,50,stdin);
-	
-	printf("Telefone: ");
-	fflush(stdin);
-	fgets(novo_cl->telefone,20,stdin);
-	
-	novo_cl->proximo_cl = *head;//vai apontar para o atual primeiro cliente da lista
+    for (int i = 0; i < strlen(cpf); i++) {
+        if (isdigit(cpf[i])) {
+            temp[j++] = cpf[i];
+        }
+    }
+    temp[j] = '\0';
+
+    if (strlen(temp) == 11) {
+        sprintf(cpf, "%c%c%c.%c%c%c.%c%c%c-%c%c", 
+                temp[0], temp[1], temp[2], temp[3], temp[4], temp[5],
+                temp[6], temp[7], temp[8], temp[9], temp[10]);
+    } else {
+        printf("CPF inválido!\n");
+        cpf[0] = '\0';
+    }
+}
+
+// validar e formatar e-mail
+int validar_email(const char *email) {
+    return strchr(email, '@') && strchr(email, '.');
+}
+
+//  formatar data de nascimento
+void formatar_data(char *data) {
+    char temp[9];
+    int j = 0;
+
+    for (int i = 0; i < strlen(data); i++) {
+        if (isdigit(data[i])) {
+            temp[j++] = data[i];
+        }
+    }
+    temp[j] = '\0';
+
+    if (strlen(temp) == 8) {
+        sprintf(data, "%c%c/%c%c/%c%c%c%c", 
+                temp[0], temp[1], temp[2], temp[3], 
+                temp[4], temp[5], temp[6], temp[7]);
+    } else {
+        printf("Data inválida! Use o formato dd/mm/aaaa.\n");
+        data[0] = '\0';
+    }
+}
+
+//cadastro de clientes
+void cadastrar_cliente(struct cliente **head) {
+    struct cliente *novo_cl = (struct cliente *)malloc(sizeof(struct cliente));
+    novo_cl->id = prox_id++;
+
+    printf("Nome: ");
+    fflush(stdin);
+    fgets(novo_cl->nome, 50, stdin);
+    strtok(novo_cl->nome, "\n");
+
+    do {
+        printf("CPF (apenas números): ");
+        fflush(stdin);
+        fgets(novo_cl->cpf, 15, stdin);
+        strtok(novo_cl->cpf, "\n");
+        formatar_cpf(novo_cl->cpf);
+    } while (novo_cl->cpf[0] == '\0');
+
+    do {
+        printf("Data de Nascimento (dd/mm/aaaa): ");
+        fflush(stdin);
+        fgets(novo_cl->data_nasc, 11, stdin);
+        strtok(novo_cl->data_nasc, "\n");
+        formatar_data(novo_cl->data_nasc);
+    } while (novo_cl->data_nasc[0] == '\0');
+
+    printf("CEP: ");
+    fflush(stdin);
+    fgets(novo_cl->end.cep, 9, stdin);
+    strtok(novo_cl->end.cep, "\n");
+
+    printf("Rua: ");
+    fflush(stdin);
+    fgets(novo_cl->end.rua, 50, stdin);
+    strtok(novo_cl->end.rua, "\n");
+
+    printf("Número: ");
+    fflush(stdin);
+    fgets(novo_cl->end.numero, 10, stdin);
+    strtok(novo_cl->end.numero, "\n");
+
+    printf("Bairro: ");
+    fflush(stdin);
+    fgets(novo_cl->end.bairro, 50, stdin);
+    strtok(novo_cl->end.bairro, "\n");
+
+    printf("Cidade: ");
+    fflush(stdin);
+    fgets(novo_cl->end.cidade, 50, stdin);
+    strtok(novo_cl->end.cidade, "\n");
+
+    printf("Estado: ");
+    fflush(stdin);
+    fgets(novo_cl->end.estado, 50, stdin);
+    strtok(novo_cl->end.estado, "\n");
+
+    do {
+        printf("E-mail: ");
+        fflush(stdin);
+        fgets(novo_cl->email, 50, stdin);
+        strtok(novo_cl->email, "\n");
+        if (!validar_email(novo_cl->email)) {
+            printf("E-mail inválido! Inclua um '@' e um domínio.\n");
+        }
+    } while (!validar_email(novo_cl->email));
+
+    printf("Telefone: ");
+    fflush(stdin);
+    fgets(novo_cl->telefone, 20, stdin);
+    strtok(novo_cl->telefone, "\n");
+
+    novo_cl->proximo_cl = *head;
     *head = novo_cl;
-    
-	printf("\nCliente cadastrado com sucesso!\n\n");
+
+    printf("\nCliente cadastrado com sucesso!\n");
 }
 
-void cadastrar_em(struct embarcacao **head){
-	
-	struct embarcacao *nova_em= (struct embarcaco*) malloc(sizeof(struct embarcacao));
-	
-	printf("Nome da Embarcacao: ");
-	fflush(stdin);
-	fgets(nova_em->nome,50,stdin);
-	
-	printf("Tipo da embarcacao: ");
-	fflush(stdin);
-	fgets(nova_em->tipo,50,stdin);
-	
-	printf("Capacidade: ");
-	scanf("%d", &nova_em->capacidade);
-	getchar();
-	
-	nova_em->proximo_em = *head;
-    *head = nova_em;
-    
-    printf("\nEmbarcação cadastrada com sucesso!\n\n");
-	
+//listar
+void listar_clientes(struct cliente *head) {
+    if (head == NULL) {
+        printf("Nenhum cliente cadastrado.\n");
+        return;
+    }
+
+    struct cliente *atual = head;
+    while (atual != NULL) {
+        printf("\n--------------------------------------------------\n");
+        printf("ID: %d\n", atual->id);
+        printf("Nome: %s\n", atual->nome);
+        printf("CPF: %s\n", atual->cpf);
+        printf("Data de Nascimento: %s\n", atual->data_nasc);
+        printf("E-mail: %s\n", atual->email);
+        printf("Telefone: %s\n", atual->telefone);
+        atual = atual->proximo_cl;
+    }
 }
 
-void listar_clientes(struct cliente *head){
-	
-	if(head==NULL){
-		printf("Nenhum cliente cadastrado!");
-		return;
-	}
-	struct cliente *atual=head;
-	while(atual!=NULL){
-		
-		printf("--------------------------------------------------");
-		printf("\nID: %d\n", atual->id);
-		printf("Nome: %s", atual->nome);
-        printf("CPF: %s", atual->cpf);
-        printf("CEP: %s", atual->end.cep);
-        printf("Rua: %s", atual->end.rua);
-        printf("Numero: %s", atual->end.numero);
-        printf("Bairro: %s", atual->end.bairro);
-        printf("Cidade: %s", atual->end.cidade);
-        printf("Estado: %s", atual->end.estado);
-        printf("Data de Nascimento: %s", atual->data_nasc);
-        printf("\nTelefone: %s\n", atual->telefone);
-        atual = atual->proximo_cl;	
-	}
+//buscar
+void buscar_cliente_por_id(struct cliente *head, int id) {
+    struct cliente *atual = head;
+
+    while (atual != NULL) {
+        if (atual->id == id) {
+            printf("\nCliente encontrado:\n");
+            printf("ID: %d\n", atual->id);
+            printf("Nome: %s\n", atual->nome);
+            printf("CPF: %s\n", atual->cpf);
+            printf("Data de Nascimento: %s\n", atual->data_nasc);
+            printf("E-mail: %s\n", atual->email);
+            printf("Telefone: %s\n", atual->telefone);
+            return;
+        }
+        atual = atual->proximo_cl;
+    }
+
+    printf("Cliente com ID %d não encontrado.\n", id);
 }
 
-void listar_embarcacoes(struct embarcacao *head){
-	if(head==NULL){
-		printf("Nenhuma embarcacao cadastrada\n");
-		return;
-	}
-	struct embarcacao *atual=head;
-	while(atual!=NULL){
-		
-		printf("Nome da Embarcação: %s", atual->nome);
-        printf("Tipo: %s", atual->tipo);
-        printf("Capacidade: %d\n", atual->capacidade);
-        atual = atual->proximo_em;	
-	}
+//excluir
+void excluir_cliente(struct cliente **head, int id) {
+    struct cliente *atual = *head;
+    struct cliente *anterior = NULL;
+
+    while (atual != NULL) {
+        if (atual->id == id) {
+            if (anterior == NULL) { // Remover o primeiro elemento
+                *head = atual->proximo_cl;
+            } else {
+                anterior->proximo_cl = atual->proximo_cl;
+            }
+            free(atual);
+            printf("\nCliente com ID %d removido com sucesso.\n", id);
+            return;
+        }
+        anterior = atual;
+        atual = atual->proximo_cl;
+    }
+
+    printf("Cliente com ID %d não encontrado.\n", id);
 }
 
+int main() {
+    struct cliente *head_cliente = NULL;
+    int opcao, id;
 
+    do {
+        printf("\n1- Cadastrar Cliente");
+        printf("\n2- Listar Todos os Clientes");
+        printf("\n3- Buscar Cliente por ID");
+        printf("\n4- Excluir Cliente");
+        printf("\n0- Sair\n");
+        printf("Digite a opcao: ");
+        scanf("%d", &opcao);
 
-int main(){
-	
-	struct cliente *head_cliente= NULL;
-	struct embarcacao *head_embarcacao= NULL;
-	int opcao;
-	
-	
-	do{
-	
-	printf("1-Cadastrar Cliente");
-	printf("\n2-Cadastrar Embarcacao");
-	printf("\n3-Listar Clientes");
-	printf("\n4-Listar Embarcacoes");
-	printf("\n0- Sair\n");
-	printf("Digite a opcao: ");
-	scanf("%d", &opcao);
-	
-	switch (opcao){
-	
-	case 1:
-                cadastrar_cl(&head_cliente);
+        switch (opcao) {
+            case 1:
+                cadastrar_cliente(&head_cliente);
                 break;
-    case 2:
-                cadastrar_em(&head_embarcacao);
-                break;
-    case 3:
+            case 2:
                 listar_clientes(head_cliente);
                 break;
-    case 4:
-                listar_embarcacoes(head_embarcacao);
+            case 3:
+                printf("Digite o ID do cliente a ser buscado: ");
+                scanf("%d", &id);
+                buscar_cliente_por_id(head_cliente, id);
                 break;
-    case 0:
+            case 4:
+                printf("Digite o ID do cliente a ser excluído: ");
+                scanf("%d", &id);
+                excluir_cliente(&head_cliente, id);
+                break;
+            case 0:
                 printf("Saindo...\n");
                 break;
-	default:
-        printf("Opção inválida! Tente novamente.\n");
-        break;
-		
-	}
-}while (opcao !=0);
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+                break;
+        }
+    } while (opcao != 0);
 
-	return 0;	
+    return 0;
 }
