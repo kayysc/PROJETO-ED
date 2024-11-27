@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -140,6 +139,7 @@ int carregarFuncionario(const char *arquivo, Funcionario *usuario) {
 // Animação de barco navegando no terminal
 void animarBarco() {
     const char *frames[] = {
+    	"\n\n"
         "       ~~~~~~            \n"
         "     ~~~~~~~~~~          \n"
         "    ~~~~~~~~~~~~         \n"
@@ -147,7 +147,7 @@ void animarBarco() {
         "  |                |      \n"
         "  |  BANZEIRO  |~~~   \n"
         "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
-
+        "\n\n"
         "     ~~~~~~~~~~           \n"
         "   ~~~~~~~~~~~~~~~        \n"
         "  ~~~~~~~~~~~~~~~~~~~     \n"
@@ -155,7 +155,7 @@ void animarBarco() {
         "|                |        \n"
         "|  BANZEIRO  | ~~~~   \n"
         "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
-
+        "\n\n"
         "   ~~~~~~~~~~~~~~~~       \n"
         " ~~~~~~~~~~~~~~~~~~~~     \n"
         "~~~~~~~~~~~~~~~~~~~~~~~   \n"
@@ -176,10 +176,10 @@ void animarBarco() {
     }
 }
 
-
 void animacaoBarco() {
 	const char *frames[] = {
-    "   ~     ~ \n"
+    "\n\n"
+	"   ~     ~ \n"
     "      ~    ~   \n"
     "    ~    ~    ~   ~   ~ \n"
     "        ~      \n",
@@ -205,18 +205,15 @@ void animacaoBarco() {
 		SLEEP(1500);
 }
 
-
-
-
-
 // Menus para Gerente e Funcionário
 void menuGerente();
 void menuFuncionario();
 
 // Função para cadastrar novos funcionários
 void cadastrarFuncionario() {
+	setlocale(LC_ALL, "Portuguese");
     Funcionario novo_funcionario;
-    printf("=== Cadastro de Funcionário ===\n");
+    printf("\n ========== Cadastro de Funcionário ==========\n\n");
     printf("Nome: ");
     getchar(); // Limpa o buffer
     fgets(novo_funcionario.nome, sizeof(novo_funcionario.nome), stdin);
@@ -232,32 +229,35 @@ void cadastrarFuncionario() {
     novo_funcionario.cpf = 0; // O CPF será atribuído pelo gerente
 
     salvarFuncionario("novos_funcionarios.dat", &novo_funcionario);
-    printf("Funcionário cadastrado com sucesso! Aguardando autorização do gerente.\n");
+    printf("\n\nFuncionário cadastrado com sucesso! Aguardando autorização do gerente.\n");
     Sleep(5000);
 	system("cls");
 }
 
 // Função para listar novos funcionários
 void listarNovosFuncionarios() {
+	setlocale(LC_ALL, "Portuguese");
 	system("cls");
     Funcionario usuario;
     FILE *fp = fopen("novos_funcionarios.dat", "rb");
     if (!fp) {
         printf("Nenhum funcionário cadastrado.\n");
-        sleep(2000);
+        Sleep(2000);
         system("cls");
         return;
     }
-    
-    printf("=== Novos Funcionários ===\n");
+    printf("\n ============ Novos Funcionários ============\n\n");
     while (fread(&usuario, sizeof(Funcionario), 1, fp)) {
         printf("Nome: %s, Usuário: %s\n", usuario.nome, usuario.usuario);
     }
+    Sleep(2500);
+	system("cls");
     fclose(fp);
 }
 
 // Função para autorizar novos funcionários
 void autorizarFuncionarios() {
+	setlocale(LC_ALL, "Portuguese");
 	system("cls");
     Funcionario usuario;
     FILE *fp = fopen("novos_funcionarios.dat", "rb");
@@ -290,16 +290,14 @@ void autorizarFuncionarios() {
 	system("cls");
 }
 
-
-
 // Função de login e autenticação
-
 void login() {
+	setlocale(LC_ALL, "Portuguese");
     Funcionario usuario;
     char login[20], senha[20];
     int i = 0;
 
-    printf("=== Login do Usuário ===\n");
+    printf("\n ============= Login do Usuário =============\n\n");
     printf("   Usuário: ");
     scanf("%s", login);
     printf("   Senha: ");
@@ -323,14 +321,18 @@ void login() {
     printf("\n");
 
     if (carregarFuncionario(login, &usuario)) {
+    	setlocale(LC_ALL, "Portuguese");
         if (strcmp(usuario.senha, senha) == 0) {
-            printf("\n\nBem-vindo, %s! (%s)\n", usuario.nome, usuario.cargo);
+            printf("\n\n\tBem-vindo, %s! (%s)\n", usuario.nome, usuario.cargo);
             Sleep(4200);
+            
             animarBarco();  // Exibe a animação do barco
 
             if (strcmp(usuario.cargo, "Gerente") == 0) {
-                menuGerente();
+                system("cls");
+				menuGerente();
             } else {
+            	system("cls");
                 menuFuncionario();
             }
         } else {
@@ -343,30 +345,30 @@ void login() {
     }
 }
 
-
-
 // Função para recuperação de senha
 void recuperarSenha() {
+	setlocale(LC_ALL, "Portuguese");
     Funcionario usuario;
     char login[20];
 
-    printf("=== Recuperação de Senha ===\n");
+    printf("\n =========== Recuperação de Senha ===========\n\n");
     printf("Informe o usuário: ");
     scanf("%s", login);
 
     if (carregarFuncionario(login, &usuario)) {
-        printf("Senha do %s (%s): %s\n", usuario.cargo, usuario.nome, usuario.senha);
+        printf("\n\tSenha do %s (%s): %s\n\n", usuario.cargo, usuario.nome, usuario.senha);
         system("pause");
         system("cls");
     } else {
-        printf("Usuário não encontrado!\n");
+        printf("\n\tUsuário não encontrado!\n\n");
+        system("pause");
         system("cls");
     }
 }
 
-
-
 Funcionario* cadas_funcis(Funcionario *funcis, int *n){
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	(*n)++;
     funcis = (Funcionario*)realloc(funcis, (*n) * sizeof(Funcionario));
     if (funcis == NULL) {
@@ -377,7 +379,7 @@ Funcionario* cadas_funcis(Funcionario *funcis, int *n){
     Funcionario novo_funcis;
     novo_funcis.cod = *n;
     
-	printf(" ---------Cadastrar Funcionario----------\n");
+	printf("\n ========== Cadastrar Funcionario ==========\n\n");
 	printf(" ________________________________________\n");
 	printf("|                                        \n");
 	printf("|  Digite nome do funcionario: ");
@@ -403,11 +405,12 @@ Funcionario* cadas_funcis(Funcionario *funcis, int *n){
 	return funcis;
 }
 
-
 void ver_funcis(Funcionario *funcis, int n) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	int i;
 	
-	printf("--------------Ver Funcionarios--------------\n");
+	printf("\n ============= Ver Funcionarios =============\n\n");
 	
     if (n == 0) {
         printf("\n\tNenhum cliente cadastrado.\n");
@@ -436,9 +439,11 @@ void ver_funcis(Funcionario *funcis, int n) {
 
 
 void atual_funcis(Funcionario *funcis, int n) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	int cod, i, cpf;
 	
-	printf("----------------Atualizar Funcionario----------------\n");
+	printf("\n ========== Atualizar Funcionario ==========\n\n");
 	
     if (n == 0) {
         printf("\n\tNenhum cliente cadastrado.\n");
@@ -489,9 +494,11 @@ void atual_funcis(Funcionario *funcis, int n) {
 
 
 Funcionario* demit_funcis(Funcionario *funcis, int *n) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	int cod, i, j, cpf;
 	
-	printf("-------------Demitir Funcionarios-------------\n");
+	printf("\n =========== Demitir Funcionarios ===========\n\n");
 	
     if (*n == 0) {
         printf("\n\tNenhum funcionario cadastrado.\n");
@@ -545,6 +552,8 @@ Funcionario* demit_funcis(Funcionario *funcis, int *n) {
 
 
 Barco* inser_barcos(Barco *barcos, int *m){
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	(*m)++;
     barcos = (Barco*)realloc(barcos, (*m) * sizeof(Barco));
     if (barcos == NULL) {
@@ -554,8 +563,7 @@ Barco* inser_barcos(Barco *barcos, int *m){
 
     Barco novo_barcos;
     novo_barcos.num = *m;
-    
-	printf("-------------Inserir Barco-------------\n");
+	printf("\n ============== Inserir Barco ==============\n\n");
 	printf(" ________________________________________\n");
 	printf("|                                        \n");
 	printf("|  Digite o nome do barco: ");
@@ -586,9 +594,10 @@ Barco* inser_barcos(Barco *barcos, int *m){
 }
 
 void ver_barcos(Barco *barcos, int m) {
+	setlocale(LC_ALL, "Portuguese");
 	int i;
-	
-	printf("---------------Ver Barcos---------------\n");
+	system("cls");
+	printf("\n ================ Ver Barcos ================\n\n");
 	
     if (m == 0) {
         printf("\n\tNenhum barco cadastrado.\n");
@@ -616,9 +625,11 @@ void ver_barcos(Barco *barcos, int m) {
 }
 
 void atual_barcos(Barco *barcos, int m) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	int num, i;
 	
-	printf("-------------Atualizar Barco-------------\n");
+	printf("\n ============= Atualizar Barco =============\n\n");
 	
     if (m == 0) {
         printf("\n\tNenhum barco cadastrado.\n");
@@ -670,9 +681,11 @@ void atual_barcos(Barco *barcos, int m) {
 }
 
 Barco* deletar_barcos(Barco *barcos, int *m) {
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	int num, i, j;
 	
-	printf("-------------Excluir Barco-------------\n");
+	printf("\n ============== Excluir Barco ==============\n\n");
 	
     if (*m == 0) {
         printf("\n\tNenhum barco cadastrado.\n");
@@ -724,14 +737,16 @@ void menu();
 void telaCancelamento();
 void linha();
 
-
 void menu(){
+	setlocale(LC_ALL, "Portuguese");
     int escolha,i=0;
     system("cls");
     
     while (i<1){
-        printf ("Tela de cancelamento de passagem\n\n");
-        printf ("Digite 1 ou 2\n\n1.Cancelar Passagem\n2.Sair\n");
+        printf("\n ===== Tela de cancelamento de passagem =====\n\n");
+        printf("\t     1. Cancelar Passagem\n");
+        printf("\t           2. Sair\n\n");
+        printf("\t     Escolha uma opção: ");
         scanf ("%d",&escolha);
         getchar(); 
         switch (escolha){
@@ -743,6 +758,7 @@ void menu(){
                 printf ("Saindo...");
                 Sleep(5000);
                 i++;
+                system("cls");
                 break;
             default:
                 printf ("Erro, comando inválido!!\n\nTente isso novamente");
@@ -753,7 +769,7 @@ void menu(){
 }
     
 void telaCancelamento(){
-	
+	setlocale(LC_ALL, "Portuguese");
 	system("cls");
     char notafiscal[50];
     int i=0,escolha,aux=0,j=0,k=0;
@@ -832,10 +848,10 @@ void linha(){
 	printf ("\n*******************************************************\n");
 }
 
-//
-
 void cadastrar_cl(struct cliente **head){// o 'head' é um ponteiro para o primeiro cliente da lista, mas como passamos ele como '**head', 
 //ele sera atualizado pela funcao e o ponteiro apontara para o novo cliente
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	struct cliente *novo_cl = (struct cliente*) malloc(sizeof(struct cliente));// '*novo_cl' recebe novo espaco na memoria 
 	novo_cl->id = prox_id++;
 
@@ -890,8 +906,9 @@ void cadastrar_cl(struct cliente **head){// o 'head' é um ponteiro para o prime
 	system("cls");
 }
 
-
 void listar_clientes(struct cliente *head){
+	system("cls");
+	setlocale(LC_ALL, "Portuguese");
 	
 	if(head==NULL){
 		printf("Nenhum cliente cadastrado!");
@@ -918,100 +935,130 @@ void listar_clientes(struct cliente *head){
 	system("cls");
 }
 
-
-
-//
-
 // Menu do Gerente
 void menuGerente() {
+	setlocale(LC_ALL, "Portuguese");
 	SetConsoleTitle("BANZEIRO - GERENTE");
 	Barco *barcos = NULL;
 	Funcionario *funcis = NULL;
 	struct cliente *head_cliente= NULL;
 	int n = 0, m = 0, opcao=0;
     do {
-  		 printf("\n=== Menu Gerente ===\n");
-        printf("1. Cadastrar Funcionário\n");
-        printf("2. Cadastrar Embarcação\n");
-        printf("3. Listar Funcionários\n");
-        printf("4. Listar Embarcações\n");
-        printf("5. Atualizar Funcionário\n");
-        printf("6. Atualizar Embarcação\n");
-        printf("7. Excluir Funcionário\n");
-        printf("8. Excluir Embarcação\n");
-        printf("9. Autorizar Novos Funcionários\n");
-        printf("10. Listar Novos Funcionários\n");
-        printf("11. Cadastrar Cliente\n");    
-        printf("12. Listar Cliente\n");
-        printf("13. Cancelar Passagem\n");
-        printf("0. Sair\n");
-        printf("Escolha uma opção: ");
+  		printf("\n =============== Menu Gerente ===============\n\n");
+        printf("\t 1. Cadastrar Funcionário\n");
+        printf("\t  2. Listar Funcionários\n");
+        printf("\t 3. Atualizar Funcionário\n");
+        printf("\t  4. Excluir Funcionário\n\n");
+        
+        printf("\t 5. Cadastrar Embarcação\n");
+        printf("\t  6. Listar Embarcações\n");
+        printf("\t 7. Atualizar Embarcação\n");
+        printf("\t  8. Excluir Embarcação\n\n");
+        
+        printf("     9. Autorizar Novos Funcionários\n");
+        printf("      10. Listar Novos Funcionários\n\n");
+        printf("\t   11. Cadastrar Cliente\n");    
+        printf("\t    12. Listar Cliente\n\n");
+        printf("\t   13. Cancelar Passagem\n\n");
+        printf("\t        14. Feedback\n\n");
+        printf("\t\t  0. Sair\n\n");
+        printf("\t   Escolha uma opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                printf("\n\nCadastrando Funcionário...\n");
+            	system("cls");
+                printf("\n\nCadastrando Funcionário...\n\n");
+                system("pause");
                 funcis = cadas_funcis(funcis, &n);
                 break;
             case 2:
-                printf("Cadastrando Embarcação...\n");
-                barcos = inser_barcos(barcos, &m);
-                break;
-            case 3:
-                printf("Listando Funcionários...\n");
+            	system("cls");
+                printf("Listando Funcionários...\n\n");
+                system("pause");
                 ver_funcis(funcis, n);
                 break;
-            case 4:
-                printf("Listando Embarcações...\n");
-                ver_barcos(barcos, m);
-                break;
-            case 5:
-                printf("Atualizando Funcionário...\n");
+            case 3:
+            	system("cls");
+                printf("Atualizando Funcionário...\n\n");
+                system("pause");
                 atual_funcis(funcis, n);
+                break;   
+            case 4:
+            	system("cls");
+                printf("Excluindo Funcionário...\n\n");
+                system("pause");
+                funcis = demit_funcis(funcis, &n);
+                break;    
+            case 5:
+            	system("cls");
+                printf("Cadastrando Embarcação...\n\n");
+                system("pause");
+                barcos = inser_barcos(barcos, &m);
                 break;
             case 6:
-                printf("Atualizando Embarcação...\n");
-                atual_barcos(barcos, m);
+            	system("cls");
+                printf("Listando Embarcações...\n\n");
+                system("pause");
+                ver_barcos(barcos, m);
                 break;
             case 7:
-                printf("Excluindo Funcionário...\n");
-                funcis = demit_funcis(funcis, &n);
+            	system("cls");
+                printf("Atualizando Embarcação...\n\n");
+                system("pause");
+                atual_barcos(barcos, m);
                 break;
             case 8:
-                printf("Excluindo Embarcação...\n");
+            	system("cls");
+                printf("Excluindo Embarcação...\n\n");
+                system("pause");
                 barcos = deletar_barcos(barcos, &m);
                 break;
             case 9:
-                printf("Autorizar Novos Funcionários...\n");
+            	system("cls");
+                printf("Autorizar Novos Funcionários...\n\n");
+                system("pause");
                 autorizarFuncionarios();
                 break;
             case 10:
-                printf("Listando Novos Funcionários...\n");
+            	system("cls");
+                printf("Listando Novos Funcionários...\n\n");
+                system("pause");
                 listarNovosFuncionarios();
                 break;
             case 11:
-            	printf("Cadastrando Cliente...\n");
+            	system("cls");
+            	printf("Cadastrando Cliente...\n\n");
+            	system("pause");
                 cadastrar_cl(&head_cliente);
                 break;
             case 12:
-            	printf("\nListando Clientes...\n");
+            	system("cls");
+            	printf("\nListando Clientes...\n\n");
+            	system("pause");
             	listar_clientes(head_cliente);
             	break;
             case 13:
-            	printf("\n Iniciando o Cancelamento da viagem e reembolso...\n");
+            	system("cls");
+            	printf("\n Iniciando o Cancelamento da viagem e reembolso...\n\n");
+            	system("pause");
 				menu();
 				break;
+			case 14:
+				system("cls");
+            	printf("\n Iniciando Feedback...\n\n");
+            	system("pause");
+            	system("cls");
+				break;
 			case 0:
-                printf("Saindo...\n");
+                printf("Saindo...\n\n");
                 system("cls");
                 break;
             default:
-                printf("Opção inválida!\n");
+                printf("Opção inválida!\n\n");
         }
     } while (opcao != 0);
 }
-
-
 
 void inicializarAssentos(char ***assentos, int linhas, int colunas) {
     int i, j;
@@ -1047,7 +1094,7 @@ void liberarAssentos(char ***assentos, int linhas, int colunas) {
 }
 
 void mostrarAssentos(char ***assentos, int linhas, int colunas) {
-    printf("\n======== MAPA DE ASSENTOS ========\n");
+    printf("\n ======== MAPA DE ASSENTOS ========\n\n");
     printf("      [1]  [2]   |   [3]  [4]  \n");
     printf("     /-----------------------\\\n");
 	int i, j;
@@ -1070,6 +1117,7 @@ void mostrarAssentos(char ***assentos, int linhas, int colunas) {
 }
 
 int escolherAssento(char ***assentos, int linhas, int colunas, char letra, int numero) {
+	setlocale(LC_ALL, "Portuguese");
     int linha = letra - 'A';
     int coluna = numero - 1;
 
@@ -1094,8 +1142,9 @@ void limparBuffer() {
 }
 
 void exibirMenuRotas() {
+	setlocale(LC_ALL, "Portuguese");
 	int i;
-    printf("======== MENU DE ROTAS ========\n");
+    printf("\n ======== MENU DE ROTAS ========\n\n");
     for (i = 0; i < MAX_DESTINOS; i++) {
         printf("Barco %d\n", i + 1);
         printf("%s\n", rotas[i].rota);
@@ -1108,11 +1157,12 @@ void exibirMenuRotas() {
 }
 
 void imprimirComprovante(Rota rotaSelecionada, char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssentos) {
+	setlocale(LC_ALL, "Portuguese");
 	int i;
     int precoUnitario = atoi(rotaSelecionada.preco + 2); // Remove o "R$" para pegar o valor
     int precoTotal = precoUnitario * totalAssentos;
 
-    printf("\n======== COMPROVANTE DE COMPRA ========\n");
+    printf("\n ======== COMPROVANTE DE COMPRA ========\n\n");
     printf("Rota: %s\n", rotaSelecionada.rota);
     printf("Horário: %s\n", rotaSelecionada.horario);
     printf("Assentos escolhidos:\n");
@@ -1124,9 +1174,10 @@ void imprimirComprovante(Rota rotaSelecionada, char assentosEscolhidos[MAX_PASSA
 }
 
 void exibirCompraFinal(Rota rotaSelecionada, char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssentos) {
+	setlocale(LC_ALL, "Portuguese");
     system(CLEAR);
     imprimirComprovante(rotaSelecionada, assentosEscolhidos, totalAssentos);
-    printf("\n======= SUA COMPRA =======\n");
+    printf("\n ======= SUA COMPRA =======\n\n");
     printf("1. Confirmo compra.\n");
     printf("Escolha uma opção: ");
     
@@ -1142,6 +1193,7 @@ void exibirCompraFinal(Rota rotaSelecionada, char assentosEscolhidos[MAX_PASSAGE
 
 // Menu do Funcionário
 void menuFuncionario() {
+	setlocale(LC_ALL, "Portuguese");
 	SetConsoleTitle("BANZEIRO - FUNCIONÁRIO");
 	Barco *barcos = NULL;
 	Funcionario *funcis = NULL;
@@ -1153,32 +1205,45 @@ void menuFuncionario() {
     int escolha, sair = 0;
 	
     do {
-        printf("\n=== Menu Funcionário ===\n");
-        printf("1. Cadastrar Cliente\n");
-        printf("2. Verificar Assentos\n");
-        printf("3. Emitir Passagem\n");
-        printf("4. Listar Embarcações\n");
-        printf("5. Atualizar Cliente\n");
-        printf("0. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("\n ============= Menu Funcionário =============\n\n");
+        printf("\t    1. Cadastrar Cliente\n");
+        printf("\t    2. Atualizar Cliente\n\n");
+        printf("\t   3. Listar Embarcações\n\n");
+        printf("\t    4. Verificar Assentos\n");
+        printf("\t      5. Emitir Passagem\n\n");
+        printf("\t           0. Sair\n\n");
+        printf("\t    Escolha uma opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
-            case 1: printf("Cadastrando Cliente...\n"); 
-			
-			break;
-            
-			case 2: printf("Monstrando Assentos...\n"); 
+            case 1: 
+				printf("Cadastrando Cliente...\n");
+				system("pause");
+				system("cls");
+				break;
+            case 2: 
+				printf("Atualizando Cliente...\n"); 
+				system("pause");
+       			system("cls");
+				break;
+			case 3:
+				printf("Listando Embarcações...\n"); 
+				system("pause");
+				ver_barcos(barcos, m);
+				system("cls");
+				break;
+			case 4: 
+				printf("Monstrando Assentos...\n"); 
 				animacaoBarco();
 				system("cls");
 			 
-			  while (!sair) {
-        system(CLEAR);
+			    while (!sair) {
+        		system(CLEAR);
 
-        printf("======= MENU PRINCIPAL =======\n");
-        printf("1. Selecionar Rota\n");
-        printf("2. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("\n ============== MENU PRINCIPAL ==============\n\n");
+        printf("\t     1. Selecionar Rota\n");
+        printf("\t          2. Sair\n\n");
+        printf("\t     Escolha uma opção: ");
         scanf("%d", &escolha);
         limparBuffer();
 
@@ -1269,47 +1334,42 @@ void menuFuncionario() {
         }
     }
 			 
-			 
     		printf("Seleção de Assento Encerrada. Boa viagem!\n");
     		Sleep(3500);
     		system("cls");
 			break;
             
-			case 3: printf("Listando Embarcações...\n"); 
-			ver_barcos(barcos, m);
-			break;
-            case 4: printf("Atualizando Cliente...\n"); 
-			
-			break;
+			case 0:
+				printf("Saindo...\n"); 
+				system("cls");
+				break;
             
-			case 0: printf("Saindo...\n"); 
-			system("cls");
-			break;
-            
-			default: printf("Opção inválida!\n");
+			default:
+				printf("Opção inválida!\n");
+				system("pause");
+				system("cls");
         }
     } while (opcao != 0);
 }
-
 
 // Função principal
 int main() {
     setlocale(LC_ALL, "Portuguese");
     SetConsoleTitle("BANZEIRO");
-    Funcionario gerente = {"Ana Conda", "admin", "1234", "Gerente", 01, 7037};
-    Funcionario funcionario = {"João de Deus", "func", "abcd", "Funcionário", 02, 8833};
+    Funcionario gerente = {"Ana", "admin", "1234", "Gerente", 01, 7037};
+    Funcionario funcionario = {"João", "func", "abcd", "Funcionário", 02, 8833};
     salvarFuncionario("admin", &gerente);
     salvarFuncionario("func", &funcionario);
     salvarFuncionario("funcionarios.dat", &gerente);
 
     int opcao;
     do {
-        printf("\n=== Sistema de Gerenciamento de Passagens ===\n");
-        printf("             1. Login\n");
-        printf("         2. Recuperar Senha\n");
-        printf("       3. Faça o seu cadastro\n");
-        printf("              0. Sair\n");
-        printf("       Escolha uma opção: ");
+        printf("\n === Sistema de Gerenciamento de Passagens ===\n\n");
+        printf("\t\t1. Login\n");
+        printf("\t    2. Recuperar Senha\n");
+        printf("\t  3. Faça o seu cadastro\n");
+        printf("\t\t 0. Sair\n");
+        printf("\n\t   Escolha uma opção: ");
         scanf("%d", &opcao);
         system("cls");
 
@@ -1324,7 +1384,7 @@ int main() {
                 cadastrarFuncionario(); 
                 break;
             case 0: 
-				printf("========Encerrando, até amanhã!========\n"); 
+				printf("\n ========== Encerrando, até amanhã! ==========\n\n");
             	Sleep(2000);
 				break;
             default: 
