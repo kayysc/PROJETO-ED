@@ -4,6 +4,8 @@
 #include <locale.h>
 #include <conio.h>
 #include <windows.h>
+#include <time.h>
+#include <ctype.h>
 
 #ifdef _WIN32
 #define CLEAR "cls"
@@ -11,11 +13,16 @@
 #define CLEAR "clear"
 #endif
 
+#define RESET "\033[0m"
+#define HIGHLIGHT "\033[1;32m" 
+#define NORMAL "\033[0;37m"
+
 #define LETRAS "ABCDEFGH"
 #define MAX_DESTINOS 4
 #define MAX_PASSAGENS 3
 
 int i, j;
+int prox_id = 1;
 
 void toLowerCase(char *str) {
     for (i = 0; str[i]; i++) {
@@ -23,21 +30,14 @@ void toLowerCase(char *str) {
     }
 }
 
-// FunÁ„o para comparar strings ignorando mai˙sculas/min˙sculas
-int stringEqualsIgnoreCase(const char *str1, const char *str2) {
-    char temp1[30], temp2[30];
-    strcpy(temp1, str1);
-    strcpy(temp2, str2);
-    toLowerCase(temp1);
-    toLowerCase(temp2);
-    return strcmp(temp1, temp2) == 0;
-}
-
-// FunÁ„o para alterar a cor no console
-void setColor(int color) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, color);
-}
+struct cliente {
+    int id;
+    char nome[50];
+    char cpf[15];
+    char data_nasc[11];
+    char telefone[20];
+    struct cliente *proximo_cl; // Lista encadeada
+};
 
 // Estrutura de rota (com origem e data)
 typedef struct {
@@ -51,15 +51,207 @@ typedef struct {
     int capacidade;
 } Rota;
 
-// Rotas com informaÁıes de origem e data
+// Rotas com informa√ß√µes de origem e data
 Rota rotas[MAX_DESTINOS] = {
     {"Manaus", "Tabatinga", "25/11/2024", "08:00", "R$200", 5, 4, 20},
-    {"Manaus", "BelÈm", "26/11/2024", "10:30", "R$150", 7, 4, 28},
-    {"Manaus", "SantarÈm", "27/11/2024", "10:00", "R$250", 6, 4, 24},
+    {"Manaus", "Bel√©m", "26/11/2024", "10:30", "R$150", 7, 4, 28},
+    {"Manaus", "Santar√©m", "27/11/2024", "10:00", "R$250", 6, 4, 24},
     {"Manaus", "Parintins", "28/11/2024", "11:00", "R$130", 8, 4, 32}
 };
 
-// FunÁıes para gerenciar assentos
+void setColor(int color) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
+
+void remover_formatacao_cpf(const char *cpf_formatado, char *cpf_limpo) {
+    int j = 0;
+    for (int i = 0; cpf_formatado[i] != '\0'; i++) {
+        if (isdigit(cpf_formatado[i])) {
+            cpf_limpo[j++] = cpf_formatado[i];
+        }
+    }
+    cpf_limpo[j] = '\0';
+}
+
+// Fun√ß√£o para validar e formatar CPF
+void ler_cpf_formatado(char *cpf) {
+    int pos = 0;
+    char c;
+
+    printf("CPF: ");
+    while (pos < 14) {
+        c = getch();
+
+        if (c == '\b' && pos > 0) {
+            pos--;
+            if (cpf[pos] == '.' || cpf[pos] == '-') pos--;
+            cpf[pos] = '\0';
+            printf("\b \b");
+        } else if (isdigit(c)) {
+            if (pos == 3 || pos == 7) {
+                cpf[pos++] = '.';
+                printf(".");
+            } else if (pos == 11) {
+                cpf[pos++] = '-';
+                printf("-");
+            }
+            cpf[pos++] = c;
+            printf("%c", c);
+        }
+    }
+    cpf[pos] = '\0';
+    printf("\n");
+}
+
+// Fun√ß√£o para calcular idade com base na data de nascimento
+int calcular_idade(const char *data_nasc) {
+    int dia, mes, ano;
+    sscanf(data_nasc, "%d/%d/%d", &dia, &mes, &ano);
+
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    int idade = tm.tm_year + 1900 - ano;
+
+    if (tm.tm_mon + 1 < mes || (tm.tm_mon + 1 == mes && tm.tm_mday < dia)) {
+        idade--;
+    }
+
+    return idade;
+}
+
+// Fun√ß√£o para validar e formatar data
+int validar_data(const char *data) {
+    int dia, mes, ano;
+
+    if (sscanf(data, "%d/%d/%d", &dia, &mes, &ano) != 3) return 0;
+
+    if (ano < 1900 || ano > 2100 || mes < 1 || mes > 12 || dia < 1 || dia > 31) return 0;
+
+    if ((mes == 4 || mes == 6 || mes == 9 || mes == 11) && dia > 30) return 0;
+    if (mes == 2) {
+        int bissexto = (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0));
+        if (dia > (bissexto ? 29 : 28)) return 0;
+    }
+    return 1;
+}
+
+void ler_data_formatada(char *data) {
+    int pos = 0;
+    char c;
+
+    printf("Data de Nascimento (dd/mm/aaaa): ");
+    while (pos < 10) {
+        c = getch();
+        if (c == '\b' && pos > 0) {
+            pos--;
+            if (data[pos] == '/') pos--;
+            data[pos] = '\0';
+            printf("\b \b");
+        } else if (isdigit(c)) {
+            if (pos == 2 || pos == 5) {
+                data[pos++] = '/';
+                printf("/");
+            }
+            data[pos++] = c;
+            printf("%c", c);
+        }
+    }
+    data[pos] = '\0';
+    printf("\n");
+}
+
+// Fun√ß√£o para validar e formatar telefone
+void ler_telefone_formatado(char *telefone) {
+    int pos = 0;
+    char c;
+
+    printf("Telefone: ");
+    while (pos < 15) {
+        c = getch();
+        if (c == '\b' && pos > 0) {
+            pos--;
+            if (telefone[pos] == ')' || telefone[pos] == ' ' || telefone[pos] == '-') pos--;
+            telefone[pos] = '\0';
+            printf("\b \b");
+        } else if (isdigit(c)) {
+            if (pos == 0) {
+                telefone[pos++] = '(';
+                printf("(");
+            } else if (pos == 3) {
+                telefone[pos++] = ')';
+                telefone[pos++] = ' ';
+                printf(") ");
+            } else if (pos == 9) {
+                telefone[pos++] = '-';
+                printf("-");
+            }
+            telefone[pos++] = c;
+            printf("%c", c);
+        }
+    }
+    telefone[pos] = '\0';
+    printf("\n");
+}
+
+// Cadastro de cliente
+void cadastrar_cliente(struct cliente **head) {
+    struct cliente *novo_cl = (struct cliente *)malloc(sizeof(struct cliente));
+    if (!novo_cl) {
+        printf("Erro ao alocar mem√≥ria!\n");
+        return;
+    }
+    novo_cl->id = prox_id++;
+
+    printf("Nome: ");
+    fflush(stdin);
+    fgets(novo_cl->nome, 50, stdin);
+    strtok(novo_cl->nome, "\n");
+
+    do {
+        ler_cpf_formatado(novo_cl->cpf);
+    } while (strlen(novo_cl->cpf) != 14);
+
+    do {
+        ler_data_formatada(novo_cl->data_nasc);
+        if (!validar_data(novo_cl->data_nasc)) {
+            printf("Data inv√°lida! Tente novamente.\n");
+        }
+    } while (!validar_data(novo_cl->data_nasc));
+
+    do {
+        ler_telefone_formatado(novo_cl->telefone);
+    } while (strlen(novo_cl->telefone) != 15);
+
+    novo_cl->proximo_cl = *head;
+    *head = novo_cl;
+
+    printf("\nCliente cadastrado com sucesso!\n");
+    getch();
+}
+
+// Buscar cliente por CPF
+struct cliente* buscar_cliente_por_cpf(struct cliente *head, const char *cpf) {
+    struct cliente *atual = head;
+    char cpf_limpo[12], cpf_atual_limpo[12];
+
+    remover_formatacao_cpf(cpf, cpf_limpo);
+
+    while (atual != NULL) {
+        remover_formatacao_cpf(atual->cpf, cpf_atual_limpo);
+
+        if (strcmp(cpf_atual_limpo, cpf_limpo) == 0) {
+            // N√£o precisa imprimir os dados do cliente aqui
+            return atual; // Retorna o ponteiro para o cliente encontrado
+        }
+        atual = atual->proximo_cl;
+    }
+
+    return NULL; // Retorna NULL se o cliente n√£o for encontrado
+}
+
+// Fun√ß√µes para gerenciar assentos
 void inicializarAssentos(char ***assentos, int linhas, int colunas) {
     for (i = 0; i < linhas; i++) {
         for (j = 0; j < colunas; j++) {
@@ -90,7 +282,7 @@ void liberarAssentos(char ***assentos, int linhas, int colunas) {
     free(assentos);
 }
 
-// FunÁ„o para exibir os assentos
+// Fun√ß√£o para exibir os assentos
 void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, int posColuna) {
     printf("\n======== MAPA DE ASSENTOS ========\n");
     printf("        [1]  [2]     |   [3]  [4]  \n");
@@ -110,10 +302,10 @@ void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, in
                 setColor(14); // Amarelo para o assento selecionado
                 printf(" %-4s", assentos[i][j]);
             } else {
-                setColor(10); // Verde para disponÌveis
+                setColor(10); // Verde para dispon√≠veis
                 printf(" %-4s", assentos[i][j]);
             }
-            setColor(7); // Reset para texto padr„o
+            setColor(7); // Reset para texto padr√£o
         }
         printf("\n");
     }
@@ -121,26 +313,26 @@ void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, in
     printf("==================================\n");
 }
 
-// SeleÁ„o de assentos com navegaÁ„o
+// Sele√ß√£o de assentos com navega√ß√£o
 int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEscolhidos[MAX_PASSAGENS][5], int *totalAssentosEscolhidos, Rota rota) {
     int posLinha = 0, posColuna = 0;
 
     while (*totalAssentosEscolhidos < MAX_PASSAGENS) {
         system(CLEAR);
 
-        // Exibindo as informaÁıes do barco
-        printf("InformaÁıes do Barco:\n");
+        // Exibindo as informa√ß√µes do barco
+        printf("Informa√ß√µes do Barco:\n");
         printf("Rota: %s -> %s\n", rota.origem, rota.destino);
         printf("Data: %s\n", rota.data);
-        printf("Hor·rio: %s\n", rota.horario);
-        printf("PreÁo: %s\n", rota.preco);
+        printf("Hor√°rio: %s\n", rota.horario);
+        printf("Pre√ßo: %s\n", rota.preco);
         printf("Capacidade: %d assentos\n", rota.capacidade);
         printf("\n");
 
         mostrarAssentos(assentos, linhas, colunas, posLinha, posColuna);
 
         printf("\nUse as setas para navegar e pressione Enter para confirmar o assento.\n");
-        printf("Pressione 'f' para finalizar a seleÁ„o, 'v' para voltar ao menu ou 'q' para sair.\n");
+        printf("Pressione 'f' para finalizar a sele√ß√£o, 'v' para voltar ao menu ou 'q' para sair.\n");
 
         int tecla = _getch();
 
@@ -162,7 +354,7 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
             }
         } else if (tecla == 13) { // Enter
             if (strcmp(assentos[posLinha][posColuna], "X") == 0) {
-                printf("Assento j· ocupado! Tente novamente.\n");
+                printf("Assento j√° ocupado! Tente novamente.\n");
                 _getch();
             } else {
                 strcpy(assentos[posLinha][posColuna], "X");
@@ -171,7 +363,7 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
                 printf("Assento %c-%d selecionado com sucesso!\n", LETRAS[posLinha], posColuna + 1);
                 _getch();
             }
-        } else if (tecla == 'f' || tecla == 'F') { // Finalizar seleÁ„o
+        } else if (tecla == 'f' || tecla == 'F') { // Finalizar sele√ß√£o
             break;
         } else if (tecla == 'v' || tecla == 'V') { // Voltar
             return -1;
@@ -182,109 +374,173 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
     return 1;
 }
 
-// FunÁ„o para comparar preÁos de rotas (para ordenaÁ„o)
+// Fun√ß√£o para comparar pre√ßos de rotas (para ordena√ß√£o)
 int compararPorPreco(const void *a, const void *b) {
     Rota *rotaA = (Rota *)a;
     Rota *rotaB = (Rota *)b;
     return strcmp(rotaA->preco, rotaB->preco);
 }
 
-// FunÁ„o para comparar capacidade de rotas (para ordenaÁ„o)
+// Fun√ß√£o para comparar capacidade de rotas (para ordena√ß√£o)
 int compararPorCapacidade(const void *a, const void *b) {
     Rota *rotaA = (Rota *)a;
     Rota *rotaB = (Rota *)b;
     return rotaB->capacidade - rotaA->capacidade;
 }
 
-int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssentos, Rota rota, char ***assentos) {
-    int opcao = -1; // Inicializar com valor inv·lido
-    int tecla, posicao = 0; // Inicializa a posiÁ„o do cursor
+void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_PASSAGENS][5]) {
+    char opcao;
+    float preco_total;
 
-    do {
+    system(CLEAR);
+    printf("===== FINALIZAR COMPRA =====\n\n");
+    printf("Inteira ou Meia? (I/M): ");
+    scanf(" %c", &opcao);
+
+    if (opcao == 'I' || opcao == 'i') {
+        preco_total = totalAssentos * atof(rota.preco + 2); // Converte o pre√ßo da rota para float, ignorando "R$"
+    } else if (opcao == 'M' || opcao == 'm') {
+        printf("Necess√°rio comprova√ß√£o de benef√≠cio\n");
+        preco_total = totalAssentos * (atof(rota.preco + 2) / 2); // Converte o pre√ßo da rota para float, ignorando "R$"
+    } else {
+        printf("Op√ß√£o inv√°lida! Pressione qualquer tecla para continuar.\n");
+        _getch();
+        finalizarCompra(totalAssentos, rota, assentosEscolhidos); // Reinicia a fun√ß√£o
+        return;
+    }
+
+    system(CLEAR);
+    printf("===== FINALIZAR COMPRA =====\n");
+    printf("Rota: %s -> %s\n", rota.origem, rota.destino);
+    printf("Data: %s\n", rota.data);
+    printf("Hor√°rio: %s\n", rota.horario);
+    printf("Assentos Selecionados:\n");
+    for (i = 0; i < totalAssentos; i++) {
+        printf("- %s\n", assentosEscolhidos[i]);
+    }
+    printf("Pre√ßo total: R$ %.2f\n", preco_total);
+    printf("============================\n");
+    printf("Confirma compra? (S/N): ");
+    scanf(" %c", &opcao);
+
+    if (opcao == 'S' || opcao == 's') {
+        // TODO: Imprimir comprovante ou finalizar a compra
+        printf("Compra confirmada! Pressione qualquer tecla para continuar.\n");
+        _getch();
+    } else {
+        printf("Compra cancelada! Voltando ao Menu Principal...\n");
+        _getch();
+    }
+}
+
+// Fun√ß√£o para exibir os detalhes da compra e permitir a troca de assentos
+int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssentos, Rota rota, char ***assentos, struct cliente **head_cliente) {
+    char resposta; // Vari√°vel para armazenar a resposta do usu√°rio
+    char cpf_busca[15]; // Vari√°vel para armazenar o CPF do cliente
+    struct cliente cliente_temp; // Vari√°vel tempor√°ria para armazenar os dados do cliente
+
+    system(CLEAR);
+    printf("======= DETALHES DA COMPRA =======\n");
+    printf("Rota: %s -> %s\n", rota.origem, rota.destino);
+    printf("Data: %s\n", rota.data);
+    printf("Hor√°rio: %s\n", rota.horario);
+    printf("Assentos Selecionados:\n");
+    for (i = 0; i < totalAssentos; i++) {
+        printf("- %s\n", assentosEscolhidos[i]);
+    }
+    printf("===============================\n");
+
+    // Pergunta sobre o cadastro do cliente
+    printf("Cliente possui cadastro? (S/N): ");
+    scanf(" %c", &resposta);
+
+    if (resposta == 'S' || resposta == 's') {
         system(CLEAR);
-        printf("======= DETALHES DA COMPRA =======\n");
-        printf("Rota: %s -> %s\n", rota.origem, rota.destino);
-        printf("Data: %s\n", rota.data);
-        printf("Hor·rio: %s\n", rota.horario);
-        printf("Assentos Selecionados:\n");
-        for (i = 0; i < totalAssentos; i++) {
-            printf("- %s\n", assentosEscolhidos[i]);
-        }
-        printf("===============================\n");
+        printf("=== BUSCAR CLIENTE POR CPF ===\n");
+        printf("Digite o CPF do cliente");
+        printf("\n");
+        ler_cpf_formatado(cpf_busca);
 
-        // Exibe as opÁıes do menu com a seta indicando a opÁ„o atual
-        setColor(posicao == 0 ? 14 : 7); // Amarelo para a opÁ„o selecionada
-        printf("-> 1. Confirmar Compra\n");
-        setColor(posicao == 1 ? 14 : 7);
-        printf("-> 2. Trocar Assentos\n");
-        setColor(posicao == 2 ? 14 : 7);
-        printf("-> 0. Cancelar Compra\n");
-        setColor(7); // Reset para a cor padr„o
+        // Chama a fun√ß√£o buscar_cliente_por_cpf e armazena o resultado
+        struct cliente *cliente_encontrado = buscar_cliente_por_cpf(*head_cliente, cpf_busca); 
 
-        tecla = _getch();
-
-        if (tecla == 224) { // Teclas de seta
-            tecla = _getch();
-            switch (tecla) {
-                case 72: // Seta para cima
-                    if (posicao > 0) posicao--;
-                    break;
-                case 80: // Seta para baixo
-                    if (posicao < 2) posicao++;
-                    break;
-            }
-        } else if (tecla == 13) { // Enter
-            opcao = posicao; // Define a opÁ„o com base na posiÁ„o do cursor
-        }
-
-        // Adicionando um tratamento para a opÁ„o
-        switch (opcao) {
-            case 0: // Confirmar Compra
-                system(CLEAR);
-                printf("Obrigado por escolher o Banzeiro. Vamos navegar juntos para o futuro? Boa Viagem!!!\n");
-                _getch();
-                exit(1); // Compra confirmada
-            case 1: // Trocar Assentos
-                // Libera os assentos selecionados anteriormente
-                for (i = 0; i < totalAssentos; i++) {
-                    int linha = assentosEscolhidos[i][0] - 'A';
-                    int coluna = assentosEscolhidos[i][2] - '1';
-                    strcpy(assentos[linha][coluna], assentosEscolhidos[i]);
-                }
-
-                // Reinicia a contagem de assentos
-                totalAssentos = 0;
-
-                // Volta para a seleÁ„o de assentos
-                escolherAssento(assentos, rota.linhas, rota.colunas, assentosEscolhidos, &totalAssentos, rota);
-                opcao = -1; // Resetando a opÁ„o para voltar ao menu detalhesDaCompra
-                break;
-            case 2: // Cancelar Compra
-                system(CLEAR);
+        if (cliente_encontrado != NULL) { // Verifica se o cliente foi encontrado
+            printf("\nCliente Identificado: %s!!! Prosseguir com a compra? (S/N) ", cliente_encontrado->nome); 
+            scanf(" %c", &resposta);
+            if (resposta == 'S' || resposta == 's') {
+                finalizarCompra(totalAssentos, rota, assentosEscolhidos); // Chama a fun√ß√£o finalizarCompra
+            } else {
                 printf("Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
                 return 0; // Retorna ao menu principal
-            default:
-                break; // Evitar execuÁ„o de outros casos
+            }
+        } else {
+            // Cliente n√£o encontrado - talvez voltar ao menu ou perguntar se quer cadastrar
+            printf("Cliente n√£o encontrado. Pressione qualquer tecla para continuar...\n");
+            _getch();
         }
-    } while (opcao != 2); // Continua enquanto n„o cancelar
-    return 0; // Finaliza adequadamente
+    } else if (resposta == 'N' || resposta == 'n') {
+        printf("Cliente deseja realizar cadastro? (S/N): ");
+        scanf(" %c", &resposta);
+        if (resposta == 'S' || resposta == 's') {
+            system(CLEAR);
+            printf("=== CADASTRAR CLIENTE ===\n");
+            cadastrar_cliente(head_cliente);
+
+            // Ap√≥s cadastrar, exibir a mensagem personalizada
+            printf("\nCliente Identificado: %s!!! Prosseguir com a compra? (S/N) ", (*head_cliente)->nome); // Acessa o nome do cliente rec√©m-cadastrado
+            scanf(" %c", &resposta);
+            if (resposta == 'S' || resposta == 's') {
+                finalizarCompra(totalAssentos, rota, assentosEscolhidos); // Chama a fun√ß√£o finalizarCompra
+            } else {
+                printf("Compra cancelada! Voltando ao Menu Principal...\n");
+                _getch();
+                return 0; // Retorna ao menu principal
+            }
+        } else {
+            // L√≥gica para coletar dados do cliente sem cadastro
+            printf("=== INFORMA√á√ïES DO CLIENTE ===\n");
+
+            printf("Nome: ");
+            fflush(stdin);
+            fgets(cliente_temp.nome, 50, stdin);
+            strtok(cliente_temp.nome, "\n");
+
+            ler_cpf_formatado(cliente_temp.cpf);
+            ler_telefone_formatado(cliente_temp.telefone);
+
+            printf("\nCliente %s pronto para embarque!!! Prosseguir com a compra? (S/N) ", cliente_temp.nome);
+            scanf(" %c", &resposta);
+            if (resposta == 'S' || resposta == 's') {
+                finalizarCompra(totalAssentos, rota, assentosEscolhidos); // Chama a fun√ß√£o finalizarCompra
+            } else {
+                printf("Compra cancelada! Voltando ao Menu Principal...\n");
+                _getch();
+                return 0; // Retorna ao menu principal
+            }
+        }
+    } else {
+        printf("Resposta inv√°lida! Pressione qualquer tecla para continuar.\n");
+        _getch();
+    }
+
+    return 0; // Finaliza a fun√ß√£o
 }
 
-// FunÁ„o genÈrica para exibir menus com navegaÁ„o por teclado
+// Fun√ß√£o gen√©rica para exibir menus com navega√ß√£o por teclado
 int mostrarMenu(const char *titulo, const char **opcoes, int numOpcoes) {
-    int posicao = 0; // Inicializa a posiÁ„o do cursor
+    int posicao = 0; // Inicializa a posi√ß√£o do cursor
     int tecla;
 
     do {
         system(CLEAR);
-        printf("======= %s =======\n", titulo); // Exibe o tÌtulo do menu
+        printf("======= %s =======\n", titulo); // Exibe o t√≠tulo do menu
 
-        // Exibe as opÁıes do menu com a seta indicando a opÁ„o atual
+        // Exibe as op√ß√µes do menu com a seta indicando a op√ß√£o atual
         for (i = 0; i < numOpcoes; i++) {
-            setColor(posicao == i ? 14 : 7); // Amarelo para a opÁ„o selecionada
+            setColor(posicao == i ? 14 : 7); // Amarelo para a op√ß√£o selecionada
             printf("-> %s\n", opcoes[i]);
-            setColor(7); // Reset para a cor padr„o
+            setColor(7); // Reset para a cor padr√£o
         }
 
         tecla = _getch();
@@ -300,20 +556,21 @@ int mostrarMenu(const char *titulo, const char **opcoes, int numOpcoes) {
                     break;
             }
         } else if (tecla == 13) { // Enter
-            return posicao; // Retorna a opÁ„o selecionada
+            return posicao; // Retorna a op√ß√£o selecionada
         }
     } while (tecla != 27); // ESC para sair do menu
 
-    return -1; // Retorna -1 se o usu·rio pressionar ESC
+    return -1; // Retorna -1 se o usu√°rio pressionar ESC
 }
 
-// FunÁ„o para listar as rotas disponÌveis (usando a funÁ„o genÈrica mostrarMenu)
-void listarRotas() {
+
+// Fun√ß√£o para listar as rotas dispon√≠veis (usando a fun√ß√£o gen√©rica mostrarMenu)
+void listarRotas(struct cliente **head_cliente) {
     const char *opcoes[MAX_DESTINOS];
     for (i = 0; i < MAX_DESTINOS; i++) {
         char temp[50];
         sprintf(temp, "%d. %s -> %s - %s - %s", i + 1, rotas[i].origem, rotas[i].destino, rotas[i].data, rotas[i].horario);
-        opcoes[i] = strdup(temp); // Aloca memÛria para a string
+        opcoes[i] = strdup(temp); // Aloca mem√≥ria para a string
     }
 
     int escolha = mostrarMenu("MENU DE ROTAS", opcoes, MAX_DESTINOS);
@@ -326,18 +583,19 @@ void listarRotas() {
 
         int resultado = escolherAssento(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas, assentosEscolhidos, &totalAssentosEscolhidos, rotaSelecionada);
         if (resultado == 1 && totalAssentosEscolhidos > 0) {
-            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos);
+            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente); // Passa head_cliente para detalhesDaCompra
         }
         liberarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas);
     }
 
-    // Libera a memÛria alocada para as strings
+    // Libera a mem√≥ria alocada para as strings
     for (i = 0; i < MAX_DESTINOS; i++) {
         free((char *)opcoes[i]);
     }
 }
-// FunÁ„o para filtrar rotas (usando a funÁ„o genÈrica mostrarMenu)
-void filtrarRotas(int filtro) {
+
+// Fun√ß√£o para filtrar rotas (usando a fun√ß√£o gen√©rica mostrarMenu)
+void filtrarRotas(int filtro, struct cliente **head_cliente) {
     // Ordena as rotas com base no filtro
     if (filtro == 1) {
         qsort(rotas, MAX_DESTINOS, sizeof(Rota), compararPorCapacidade);
@@ -345,7 +603,7 @@ void filtrarRotas(int filtro) {
         qsort(rotas, MAX_DESTINOS, sizeof(Rota), compararPorPreco);
     }
 
-    const char *opcoes[MAX_DESTINOS + 1]; // +1 para a opÁ„o "Voltar"
+    const char *opcoes[MAX_DESTINOS + 1]; // +1 para a op√ß√£o "Voltar"
     for (i = 0; i < MAX_DESTINOS; i++) {
         char temp[80];
         sprintf(temp, "%d. %s -> %s - %s - %s - %s", i + 1, rotas[i].origem, rotas[i].destino, rotas[i].data, rotas[i].horario, rotas[i].preco);
@@ -353,7 +611,7 @@ void filtrarRotas(int filtro) {
     }
     opcoes[MAX_DESTINOS] = "0. Voltar ao menu principal";
 
-    int escolha = mostrarMenu(filtro == 1 ? "DESTINOS MAIS POPULARES" : "DESTINOS MAIS ACESSÕVEIS", opcoes, MAX_DESTINOS + 1);
+    int escolha = mostrarMenu(filtro == 1 ? "DESTINOS MAIS POPULARES" : "DESTINOS MAIS ACESS√çVEIS", opcoes, MAX_DESTINOS + 1);
 
     if (escolha >= 0 && escolha < MAX_DESTINOS) {
         Rota rotaSelecionada = rotas[escolha];
@@ -363,49 +621,58 @@ void filtrarRotas(int filtro) {
 
         int resultado = escolherAssento(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas, assentosEscolhidos, &totalAssentosEscolhidos, rotaSelecionada);
         if (resultado == 1 && totalAssentosEscolhidos > 0) {
-            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos);
+            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente); // Passa head_cliente para detalhesDaCompra
         }
         liberarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas);
     }
 
-    // Libera a memÛria alocada para as strings
-    for (i = 0; i <= MAX_DESTINOS; i++) { // <= para incluir a opÁ„o "Voltar"
+    // Libera a mem√≥ria alocada para as strings
+    for (i = 0; i <= MAX_DESTINOS; i++) { // <= para incluir a op√ß√£o "Voltar"
         free((char *)opcoes[i]);
     }
 }
 
-// Menu principal atualizado (usando a funÁ„o genÈrica mostrarMenu)
+// Menu principal atualizado (usando a fun√ß√£o gen√©rica mostrarMenu)
 int main() {
     setlocale(LC_ALL, "");
 
     const char *opcoes_menu_principal[] = {
-        "1. Listar Rotas DisponÌveis",
+        "1. Listar Rotas Dispon√≠veis",
         "2. Destinos Mais Populares",
-        "3. Destinos Mais AcessÌveis",
+        "3. Destinos Mais Acess√≠veis",
         "4. Sair"
     };
     int num_opcoes_menu_principal = sizeof(opcoes_menu_principal) / sizeof(opcoes_menu_principal[0]);
 
     int escolha;
+    struct cliente *head_cliente = NULL; // Inicializa a lista de clientes
 
     do {
         escolha = mostrarMenu("MENU DE ROTAS", opcoes_menu_principal, num_opcoes_menu_principal);
 
         switch (escolha) {
             case 0:
-                listarRotas();
+                listarRotas(&head_cliente); // Passa o endere√ßo de head_cliente
                 break;
             case 1:
-                filtrarRotas(1); // Filtro de destinos mais populares
+                filtrarRotas(1, &head_cliente); // Passa o endere√ßo de head_cliente
                 break;
             case 2:
-                filtrarRotas(2); // Filtro de destinos mais acessÌveis
+                filtrarRotas(2, &head_cliente); // Passa o endere√ßo de head_cliente
                 break;
             case 3:
-                printf("Encerrando o programa. AtÈ mais!\n");
+                printf("Encerrando o programa. At√© mais!\n");
                 break;
         }
-    } while (escolha != 3); // 3 È o Ìndice da opÁ„o "Sair"
+    } while (escolha != 3); // 3 √© o √≠ndice da op√ß√£o "Sair"
+
+    // Libera√ß√£o de mem√≥ria dos clientes cadastrados
+    struct cliente *temp;
+    while (head_cliente != NULL) {
+        temp = head_cliente;
+        head_cliente = head_cliente->proximo_cl;
+        free(temp);
+    }
 
     return 0;
 }
