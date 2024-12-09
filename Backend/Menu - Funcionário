@@ -13,10 +13,6 @@
 #define CLEAR "clear"
 #endif
 
-#define RESET "\033[0m"
-#define HIGHLIGHT "\033[1;32m"
-#define NORMAL "\033[0;37m"
-
 #define LETRAS "ABCDEFGH"
 #define MAX_DESTINOS 4
 #define MAX_PASSAGENS 3
@@ -24,22 +20,6 @@
 int i, j;
 int prox_id = 1;
 
-void toLowerCase(char *str) {
-    for (i = 0; str[i]; i++) {
-        str[i] = tolower(str[i]);
-    }
-}
-struct Nota {
-    char nome[50];
-    char cpf[15];
-    int notaFiscal;
-    char origem[30];
-    char destino[30];
-    char data[12];
-    char horario[10];
-    int preco;
-    struct Nota *prox_Nota;
-};
 struct cliente {
     int id;
     char nome[50];
@@ -60,7 +40,82 @@ typedef struct {
     int colunas;
     int capacidade;
 } Rota;
+
+struct Nota {
+    char nome[50];
+    char cpf[15];
+    int notaFiscal;
+    char origem[30];
+    char destino[30];
+    char data[12];
+    char horario[10];
+    int preco;
+    struct Nota *prox_Nota;
+};
+
 struct Nota *notasfiscais = NULL;
+
+void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char *cpf) {
+    system("cls");
+	struct Nota *aux = (struct Nota *)malloc(sizeof(struct Nota));
+
+    strcpy(aux->origem, rota.origem);
+    strcpy(aux->destino, rota.destino);
+    strcpy(aux->horario, rota.horario);
+    strcpy(aux->data, rota.data);
+    strcpy(aux->nome, nome);
+    strcpy(aux->cpf, cpf);
+    aux->preco = preco_total;
+    aux->notaFiscal = rand() % 10000;
+
+    aux->prox_Nota = notasfiscais;
+    notasfiscais = aux;
+
+    // Exibe todas as informações da nota fiscal
+    printf("\n===== NOTA FISCAL =====\n");
+    printf("Nota Fiscal ID: %d\n", aux->notaFiscal);
+    printf("Nome: %s\n", aux->nome);
+    printf("CPF: %s\n", aux->cpf);
+    printf("Origem: %s\n", aux->origem);
+    printf("Destino: %s\n", aux->destino);
+    printf("Data: %s\n", aux->data);
+    printf("Horário: %s\n", aux->horario);
+    printf("Preço Total: R$ %.2f\n", (float)aux->preco);
+    printf("=======================\n");
+}
+
+// Listagem de Nota fiscal, onde ele vai listar todas as notas, caso nem tenha, ele informa que não existe registro no programa
+void ListagemNota() {
+    struct Nota *buscar = notasfiscais;
+    int i = 0;
+
+    system(CLEAR);
+    printf("===== NOTAS FISCAIS =====\n\n");
+
+    while (buscar != NULL) {
+        printf("ID da Nota Fiscal: %i\n", buscar->notaFiscal);
+        printf("CPF do Cliente: %s\n", buscar->cpf);
+        printf("Nome do Cliente: %s\n", buscar->nome);
+        printf("Origem: %s\n", buscar->origem);
+        printf("Destino: %s\n", buscar->destino);
+        printf("Data: %s\n", buscar->data);
+        printf("Horário: %s\n", buscar->horario);
+        printf("Preço: R$%i\n", buscar->preco);
+        printf("========================\n");
+
+        buscar = buscar->prox_Nota;
+        i++;
+        Sleep(1000);
+    }
+
+    if (i == 0) {
+        printf("Nenhuma nota fiscal foi cadastrada!!!\n");
+        Sleep(2000);
+    }
+
+    printf("Pressione qualquer tecla para voltar ao menu...\n");
+    getch();
+}
 
 // Rotas com informações de origem e data
 Rota rotas[MAX_DESTINOS] = {
@@ -73,16 +128,6 @@ Rota rotas[MAX_DESTINOS] = {
 void setColor(int color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
-}
-
-void remover_formatacao_cpf(const char *cpf_formatado, char *cpf_limpo) {
-    int j = 0,i;
-    for (i = 0; cpf_formatado[i] != '\0'; i++) {
-        if (isdigit(cpf_formatado[i])) {
-            cpf_limpo[j++] = cpf_formatado[i];
-        }
-    }
-    cpf_limpo[j] = '\0';
 }
 
 // Função para validar e formatar CPF
@@ -113,6 +158,16 @@ void ler_cpf_formatado(char *cpf) {
     }
     cpf[pos] = '\0';
     printf("\n");
+}
+
+void remover_formatacao_cpf(const char *cpf_formatado, char *cpf_limpo) {
+    int j = 0;
+    for (i = 0; cpf_formatado[i] != '\0'; i++) {
+        if (isdigit(cpf_formatado[i])) {
+            cpf_limpo[j++] = cpf_formatado[i];
+        }
+    }
+    cpf_limpo[j] = '\0';
 }
 
 // Função para calcular idade com base na data de nascimento
@@ -194,7 +249,7 @@ void ler_telefone_formatado(char *telefone) {
                 telefone[pos++] = ')';
                 telefone[pos++] = ' ';
                 printf(") ");
-            } else if (pos == 9) {
+            } else if (pos == 10) {
                 telefone[pos++] = '-';
                 printf("-");
             }
@@ -204,6 +259,42 @@ void ler_telefone_formatado(char *telefone) {
     }
     telefone[pos] = '\0';
     printf("\n");
+}
+
+// Função genérica para exibir menus com navegação por teclado
+int mostrarMenu(const char *titulo, const char **opcoes, int numOpcoes) {
+    int posicao = 0; // Inicializa a posição do cursor
+    int tecla;
+
+    do {
+        system(CLEAR);
+        printf("======= %s =======\n", titulo); // Exibe o título do menu
+
+        // Exibe as opções do menu com a seta indicando a opção atual
+        for (i = 0; i < numOpcoes; i++) {
+            setColor(posicao == i ? 14 : 7); // Amarelo para a opção selecionada
+            printf("-> %s\n", opcoes[i]);
+            setColor(7); // Reset para a cor padrão
+        }
+
+        tecla = _getch();
+
+        if (tecla == 224) { // Teclas de seta
+            tecla = _getch();
+            switch (tecla) {
+                case 72: // Seta para cima
+                    if (posicao > 0) posicao--;
+                    break;
+                case 80: // Seta para baixo
+                    if (posicao < numOpcoes - 1) posicao++;
+                    break;
+            }
+        } else if (tecla == 13) { // Enter
+            return posicao; // Retorna a opção selecionada
+        }
+    } while (tecla != 27); // ESC para sair do menu
+
+    return -1; // Retorna -1 se o usuário pressionar ESC
 }
 
 // Cadastro de cliente
@@ -243,7 +334,7 @@ void cadastrar_cliente(struct cliente **head) {
 }
 
 // Buscar cliente por CPF
-struct cliente* buscar_cliente_por_cpf(struct cliente *head, const char *cpf) {
+void buscar_cliente_por_cpf(struct cliente *head, const char *cpf) {
     struct cliente *atual = head;
     char cpf_limpo[12], cpf_atual_limpo[12];
 
@@ -253,13 +344,17 @@ struct cliente* buscar_cliente_por_cpf(struct cliente *head, const char *cpf) {
         remover_formatacao_cpf(atual->cpf, cpf_atual_limpo);
 
         if (strcmp(cpf_atual_limpo, cpf_limpo) == 0) {
-            // Não precisa imprimir os dados do cliente aqui
-            return atual; // Retorna o ponteiro para o cliente encontrado
+            printf("\nCliente encontrado:\n");
+            printf("ID: %d\n", atual->id);
+            printf("Nome: %s\n", atual->nome);
+            printf("CPF: %s\n", atual->cpf);
+            printf("Data de Nascimento: %s\n", atual->data_nasc);
+            printf("Idade: %d anos\n", calcular_idade(atual->data_nasc));
+            printf("Telefone: %s\n", atual->telefone);
+            return;
         }
         atual = atual->proximo_cl;
     }
-
-    return NULL; // Retorna NULL se o cliente não for encontrado
 }
 
 // Funções para gerenciar assentos
@@ -296,8 +391,8 @@ void liberarAssentos(char ***assentos, int linhas, int colunas) {
 // Função para exibir os assentos
 void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, int posColuna) {
     printf("\n======== MAPA DE ASSENTOS ========\n");
-    printf("        [1]  [2]     |   [3]  [4]  \n");
-    printf("        /-----------------------\\\n");
+    printf("      [1]  [2]   |   [3]  [4]  \n");
+    printf("     /-----------------------\\\n");
 
     for (i = 0; i < linhas; i++) {
         printf(" [%c] ", LETRAS[i]);
@@ -320,7 +415,7 @@ void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, in
         }
         printf("\n");
     }
-    printf("        \\-----------------------/\n");
+    printf("     \\-----------------------/\n");
     printf("==================================\n");
 }
 
@@ -385,104 +480,92 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
     return 1;
 }
 
-// Função para comparar preços de rotas (para ordenação)
-int compararPorPreco(const void *a, const void *b) {
-    Rota *rotaA = (Rota *)a;
-    Rota *rotaB = (Rota *)b;
-    return strcmp(rotaA->preco, rotaB->preco);
+// Função para buscar cliente (comum)
+struct cliente* buscarCliente(struct cliente *head, const char *cpf, int exibir_informacoes) {
+    struct cliente *atual = head;
+    char cpf_limpo[12], cpf_atual_limpo[12];
+
+    remover_formatacao_cpf(cpf, cpf_limpo);
+
+    while (atual != NULL) {
+        remover_formatacao_cpf(atual->cpf, cpf_atual_limpo);
+
+        if (strcmp(cpf_atual_limpo, cpf_limpo) == 0) {
+            if (exibir_informacoes) {
+                printf("\nCliente encontrado:\n");
+                printf("ID: %d\n", atual->id);
+                printf("Nome: %s\n", atual->nome);
+                printf("CPF: %s\n", atual->cpf);
+                printf("Data de Nascimento: %s\n", atual->data_nasc);
+                printf("Idade: %d anos\n", calcular_idade(atual->data_nasc));
+                printf("Telefone: %s\n", atual->telefone);
+            }
+            return atual; // Retorna o ponteiro para o cliente encontrado
+        }
+        atual = atual->proximo_cl;
+    }
+    return NULL; // Retorna NULL se o cliente não for encontrado
 }
 
-// Função para comparar capacidade de rotas (para ordenação)
-int compararPorCapacidade(const void *a, const void *b) {
-    Rota *rotaA = (Rota *)a;
-    Rota *rotaB = (Rota *)b;
-    return rotaB->capacidade - rotaA->capacidade;
+// Buscar cliente por CPF (sem exibir informações)
+struct cliente* buscarCliente_por_cpf_sem_exibir(struct cliente *head, const char *cpf) {
+    return buscarCliente(head, cpf, 0); // Chama buscarCliente com exibir_informacoes = 0
 }
 
-void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char *cpf) {
-    system("cls");
-	struct Nota *aux = (struct Nota *)malloc(sizeof(struct Nota));
-
-    strcpy(aux->origem, rota.origem);
-    strcpy(aux->destino, rota.destino);
-    strcpy(aux->horario, rota.horario);
-    strcpy(aux->data, rota.data);
-    strcpy(aux->nome, nome);
-    strcpy(aux->cpf, cpf);
-    aux->preco = preco_total;
-    aux->notaFiscal = rand() % 10000;
-
-    aux->prox_Nota = notasfiscais;
-    notasfiscais = aux;
-
-    // Exibe todas as informações da nota fiscal
-    printf("\n===== NOTA FISCAL =====\n");
-    printf("Nota Fiscal ID: %d\n", aux->notaFiscal);
-    printf("Nome: %s\n", aux->nome);
-    printf("CPF: %s\n", aux->cpf);
-    printf("Origem: %s\n", aux->origem);
-    printf("Destino: %s\n", aux->destino);
-    printf("Data: %s\n", aux->data);
-    printf("Horário: %s\n", aux->horario);
-    printf("Preço Total: R$ %.2f\n", (float)aux->preco);
-    printf("=======================\n");
+// Buscar cliente por CPF (exibindo informações)
+struct cliente* buscarCliente_por_cpf_com_exibir(struct cliente *head, const char *cpf) {
+    return buscarCliente(head, cpf, 1); // Chama buscarCliente com exibir_informacoes = 1
 }
-void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_PASSAGENS][5], const char *nome , const char *cpf) {
+
+void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_PASSAGENS][5], const char *nome, const char *cpf) {
     char opcao;
     float preco_total;
 
-    system(CLEAR);
-    printf("===== FINALIZAR COMPRA =====\n\n");
-    printf("Inteira ou Meia? (I/M): ");
-    scanf(" %c", &opcao);
+    while (1) { // Loop while para controle de fluxo
+        system(CLEAR);
+        printf("===== FINALIZAR COMPRA =====\n\n");
+        printf("Inteira ou Meia? (I/M): ");
+        scanf(" %c", &opcao);
+        if (opcao == 'I' || opcao == 'i') {
+            preco_total = totalAssentos * atof(rota.preco + 2);
+        } else if (opcao == 'M' || opcao == 'm') {
+            printf("Necessário comprovação de benefício\n");
+            preco_total = totalAssentos * (atof(rota.preco + 2) / 2); 
+        } else {
+            printf("Opção inválida! Pressione qualquer tecla para continuar.\n");
+            _getch();
+            return; // Retorna à função detalhesDaCompra
+        }
 
-    if (opcao == 'I' || opcao == 'i') {
-        preco_total = totalAssentos * atof(rota.preco + 2); // Converte o preço da rota para float, ignorando "R$"
-    } else if (opcao == 'M' || opcao == 'm') {
-        printf("Necessário comprovação de benefício\n");
-        preco_total = totalAssentos * (atof(rota.preco + 2) / 2); // Converte o preço da rota para float, ignorando "R$"
-    } else {
-        printf("Opção inválida! Pressione qualquer tecla para continuar.\n");
-        _getch();
-        finalizarCompra(totalAssentos, rota, assentosEscolhidos,nome,cpf); // Reinicia a função
-        return;
-    }
+        system(CLEAR);
+        printf("===== FINALIZAR COMPRA =====\n");
+        printf("Rota: %s -> %s\n", rota.origem, rota.destino);
+        printf("Data: %s\n", rota.data);
+        printf("Horário: %s\n", rota.horario);
+        printf("Assentos Selecionados:\n");
+        for (i = 0; i < totalAssentos; i++) {
+            printf("- %s\n", assentosEscolhidos[i]);
+        }
+        printf("Preço total: R$ %.2f\n", preco_total);
+        printf("============================\n");
+        printf("Confirma compra? (S/N): ");
+        scanf(" %c", &opcao);
 
-    system(CLEAR);
-    printf("===== FINALIZAR COMPRA =====\n");
-    printf("Rota: %s -> %s\n", rota.origem, rota.destino);
-    printf("Data: %s\n", rota.data);
-    printf("Horário: %s\n", rota.horario);
-    printf("Assentos Selecionados:\n");
-    for (i = 0; i < totalAssentos; i++) {
-        printf("- %s\n", assentosEscolhidos[i]);
-    }
-    printf("Preço total: R$ %2.f\n", preco_total);
-    printf("============================\n");
-    printf("Confirma compra? (S/N): ");
-    scanf(" %c", &opcao);
-
-    if (opcao == 'S' || opcao == 's') {
-        // TODO: Imprimir comprovante ou finalizar a compra
-        geracaoNotaFiscal(rota,preco_total,nome,cpf); // A geraçao da nota fiscal
-
-        printf("Compra confirmada! Pressione qualquer tecla para continuar.\n");
-        _getch();
-    } else {
-        printf("Compra cancelada! Voltando ao Menu Principal...\n");
-        _getch();
-    }
+        if (opcao == 'S' || opcao == 's') {
+            geracaoNotaFiscal(rota, preco_total, nome, cpf);
+            printf("Compra confirmada! Pressione qualquer tecla para continuar.\n");
+            _getch();
+            break; // Sai do loop após a confirmação da compra
+        } else {
+            printf("Compra cancelada! Voltando ao Menu Principal...\n");
+            _getch();
+        }
+    } 
 }
 
-// Função para exibir os detalhes da compra e permitir a troca de assentos
 int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssentos, Rota rota, char ***assentos, struct cliente **head_cliente) {
-    char resposta; // Variável para armazenar a resposta do usuário
-    char cpf_busca[15]; // Variável para armazenar o CPF do cliente
-    struct cliente cliente_temp; // Variável temporária para armazenar os dados do cliente
-
-
-
-
+    char resposta;
+    
     system(CLEAR);
     printf("======= DETALHES DA COMPRA =======\n");
     printf("Rota: %s -> %s\n", rota.origem, rota.destino);
@@ -494,34 +577,32 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
     }
     printf("===============================\n");
 
-    // Pergunta sobre o cadastro do cliente
     printf("Cliente possui cadastro? (S/N): ");
     scanf(" %c", &resposta);
 
     if (resposta == 'S' || resposta == 's') {
+        char cpf_busca[15]; // Variável cpf_busca declarada dentro do bloco condicional
         system(CLEAR);
         printf("=== BUSCAR CLIENTE POR CPF ===\n");
         printf("Digite o CPF do cliente");
         printf("\n");
         ler_cpf_formatado(cpf_busca);
-
-        // Chama a função buscar_cliente_por_cpf e armazena o resultado
-        struct cliente *cliente_encontrado = buscar_cliente_por_cpf(*head_cliente, cpf_busca);
-
-        if (cliente_encontrado != NULL) { // Verifica se o cliente foi encontrado
+        
+        struct cliente *cliente_encontrado = buscarCliente_por_cpf_sem_exibir(*head_cliente, cpf_busca);
+        
+        if (cliente_encontrado != NULL) {
             printf("\nCliente Identificado: %s!!! Prosseguir com a compra? (S/N) ", cliente_encontrado->nome);
             scanf(" %c", &resposta);
             if (resposta == 'S' || resposta == 's') {
-                finalizarCompra(totalAssentos, rota, assentosEscolhidos,cliente_encontrado->nome,cliente_encontrado->cpf); // Chama a função finalizarCompra
+                finalizarCompra(totalAssentos, rota, assentosEscolhidos, cliente_encontrado->nome, cliente_encontrado->cpf);
             } else {
                 printf("Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
-                return 0; // Retorna ao menu principal
+                return 0; // Retorno 0 para indicar que a função terminou
             }
         } else {
-            // Cliente não encontrado - talvez voltar ao menu ou perguntar se quer cadastrar
             printf("Cliente não encontrado. Pressione qualquer tecla para continuar...\n");
-            _getch();
+            _getch(); 
         }
     } else if (resposta == 'N' || resposta == 'n') {
         printf("Cliente deseja realizar cadastro? (S/N): ");
@@ -530,24 +611,18 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
             system(CLEAR);
             printf("=== CADASTRAR CLIENTE ===\n");
             cadastrar_cliente(head_cliente);
-
-            // Após cadastrar, exibir a mensagem personalizada
-            printf("\nCliente Identificado: %s!!! Prosseguir com a compra? (S/N) ", (*head_cliente)->nome); // Acessa o nome do cliente recém-cadastrado
+            printf("\nCliente Identificado: %s!!! Prosseguir com a compra? (S/N) ", (*head_cliente)->nome);
             scanf(" %c", &resposta);
             if (resposta == 'S' || resposta == 's') {
-
-                //Caso o usuário Clique em S, ele vai copiar tudo para nota fiscal
-                finalizarCompra(totalAssentos, rota, assentosEscolhidos,(*head_cliente)->nome,(*head_cliente)->cpf); // Chama a função finalizarCompra
-
+                finalizarCompra(totalAssentos, rota, assentosEscolhidos, (*head_cliente)->nome, (*head_cliente)->cpf);
             } else {
                 printf("Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
-                return 0; // Retorna ao menu principal
+                return 0; // Retorno 0 para indicar que a função terminou
             }
         } else {
-            // Lógica para coletar dados do cliente sem cadastro
+            struct cliente cliente_temp; // Variável cliente_temp declarada dentro do bloco condicional
             printf("=== INFORMAÇÕES DO CLIENTE ===\n");
-
             printf("Nome: ");
             fflush(stdin);
             fgets(cliente_temp.nome, 50, stdin);
@@ -555,75 +630,34 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
 
             ler_cpf_formatado(cliente_temp.cpf);
             ler_telefone_formatado(cliente_temp.telefone);
-
             printf("\nCliente %s pronto para embarque!!! Prosseguir com a compra? (S/N) ", cliente_temp.nome);
             scanf(" %c", &resposta);
             if (resposta == 'S' || resposta == 's') {
-
-
-                finalizarCompra(totalAssentos, rota, assentosEscolhidos,cliente_temp.nome,cliente_temp.cpf); // Chama a função finalizarCompra
+                finalizarCompra(totalAssentos, rota, assentosEscolhidos, cliente_temp.nome, cliente_temp.cpf);
             } else {
                 printf("Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
-                return 0; // Retorna ao menu principal
+                return 0; // Retorno 0 para indicar que a função terminou
             }
         }
     } else {
         printf("Resposta inválida! Pressione qualquer tecla para continuar.\n");
         _getch();
     }
-
     return 0; // Finaliza a função
 }
 
-// Função genérica para exibir menus com navegação por teclado
-int mostrarMenu(const char *titulo, const char **opcoes, int numOpcoes) {
-    int posicao = 0; // Inicializa a posição do cursor
-    int tecla;
-
-    do {
-        system(CLEAR);
-        printf("======= %s =======\n", titulo); // Exibe o título do menu
-
-        // Exibe as opções do menu com a seta indicando a opção atual
-        for (i = 0; i < numOpcoes; i++) {
-            setColor(posicao == i ? 14 : 7); // Amarelo para a opção selecionada
-            printf("-> %s\n", opcoes[i]);
-            setColor(7); // Reset para a cor padrão
-        }
-
-        tecla = _getch();
-
-        if (tecla == 224) { // Teclas de seta
-            tecla = _getch();
-            switch (tecla) {
-                case 72: // Seta para cima
-                    if (posicao > 0) posicao--;
-                    break;
-                case 80: // Seta para baixo
-                    if (posicao < numOpcoes - 1) posicao++;
-                    break;
-            }
-        } else if (tecla == 13) { // Enter
-            return posicao; // Retorna a opção selecionada
-        }
-    } while (tecla != 27); // ESC para sair do menu
-
-    return -1; // Retorna -1 se o usuário pressionar ESC
-}
-
-
-// Função para listar as rotas disponíveis (usando a função genérica mostrarMenu)
 void listarRotas(struct cliente **head_cliente) {
-    const char *opcoes[MAX_DESTINOS];
+    const char *opcoes[MAX_DESTINOS + 1]; 
     for (i = 0; i < MAX_DESTINOS; i++) {
         char temp[50];
         sprintf(temp, "%d. %s -> %s - %s - %s", i + 1, rotas[i].origem, rotas[i].destino, rotas[i].data, rotas[i].horario);
-        opcoes[i] = strdup(temp); // Aloca memória para a string
+        opcoes[i] = strdup(temp); 
     }
+    opcoes[MAX_DESTINOS] = "0. Voltar"; 
 
-    int escolha = mostrarMenu("MENU DE ROTAS", opcoes, MAX_DESTINOS);
-
+    int escolha = mostrarMenu("MENU DE ROTAS", opcoes, MAX_DESTINOS + 1);
+    
     if (escolha >= 0 && escolha < MAX_DESTINOS) {
         Rota rotaSelecionada = rotas[escolha];
         char ***assentos = criarAssentos(rotaSelecionada.linhas, rotaSelecionada.colunas);
@@ -632,129 +666,87 @@ void listarRotas(struct cliente **head_cliente) {
 
         int resultado = escolherAssento(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas, assentosEscolhidos, &totalAssentosEscolhidos, rotaSelecionada);
         if (resultado == 1 && totalAssentosEscolhidos > 0) {
-            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente); // Passa head_cliente para detalhesDaCompra
-        }
+            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente);
+        } 
         liberarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas);
+    }else if (escolha == MAX_DESTINOS){
+    	 // Libera a memória alocada para as strings
+    	for (i = 0; i <= MAX_DESTINOS; i++) {
+        	free((char *)opcoes[i]);
     }
-
-    // Libera a memória alocada para as strings
-    for (i = 0; i < MAX_DESTINOS; i++) {
-        free((char *)opcoes[i]);
-    }
+	}
 }
 
-// Função para filtrar rotas (usando a função genérica mostrarMenu)
-void filtrarRotas(int filtro, struct cliente **head_cliente) {
-    // Ordena as rotas com base no filtro
-    if (filtro == 1) {
-        qsort(rotas, MAX_DESTINOS, sizeof(Rota), compararPorCapacidade);
-    } else if (filtro == 2) {
-        qsort(rotas, MAX_DESTINOS, sizeof(Rota), compararPorPreco);
-    }
 
-    const char *opcoes[MAX_DESTINOS + 1]; // +1 para a opção "Voltar"
-    for (i = 0; i < MAX_DESTINOS; i++) {
-        char temp[80];
-        sprintf(temp, "%d. %s -> %s - %s - %s - %s", i + 1, rotas[i].origem, rotas[i].destino, rotas[i].data, rotas[i].horario, rotas[i].preco);
-        opcoes[i] = strdup(temp);
-    }
-    opcoes[MAX_DESTINOS] = "0. Voltar ao menu principal";
+// Menu da Área do Cliente
+void menuCliente(struct cliente **head_cliente) { // Recebe o endereço do ponteiro head_cliente
+    const char *opcoes[] = {
+        "1. Cadastrar Cliente",
+        "2. Buscar Cliente por CPF",
+        "3. Voltar"
+    };
+    int escolha;
+    char cpf_busca[15];
 
-    int escolha = mostrarMenu(filtro == 1 ? "DESTINOS MAIS POPULARES" : "DESTINOS MAIS ACESSÍVEIS", opcoes, MAX_DESTINOS + 1);
-
-    if (escolha >= 0 && escolha < MAX_DESTINOS) {
-        Rota rotaSelecionada = rotas[escolha];
-        char ***assentos = criarAssentos(rotaSelecionada.linhas, rotaSelecionada.colunas);
-        char assentosEscolhidos[MAX_PASSAGENS][5];
-        int totalAssentosEscolhidos = 0;
-
-        int resultado = escolherAssento(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas, assentosEscolhidos, &totalAssentosEscolhidos, rotaSelecionada);
-        if (resultado == 1 && totalAssentosEscolhidos > 0) {
-            detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente); // Passa head_cliente para detalhesDaCompra
+    do {
+        escolha = mostrarMenu("ÁREA DO CLIENTE", opcoes, 3);
+        switch (escolha) {
+            case 0:
+                system(CLEAR);
+                printf("=== CADASTRAR CLIENTE ===\n");
+                cadastrar_cliente(head_cliente); // Passa o endereço de head_cliente
+                break;
+            case 1: {
+                system(CLEAR);
+                printf("=== BUSCAR CLIENTE POR CPF ===\n");
+                printf("Digite o CPF do cliente");
+                printf("\n");
+                ler_cpf_formatado(cpf_busca);
+                buscarCliente_por_cpf_com_exibir(*head_cliente, cpf_busca); // Chama a função com o ponteiro head_cliente
+                printf("\nPressione qualquer tecla para continuar...");
+                _getch();
+                break;
+            }
+            case 2:
+                printf("Voltando ao menu anterior...\n");
+                return;
         }
-        liberarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas);
-    }
-
-    // Libera a memória alocada para as strings
-    for (i = 0; i <= MAX_DESTINOS; i++) { // <= para incluir a opção "Voltar"
-        free((char *)opcoes[i]);
-    }
+    } while (1);
 }
 
-// Listagem de Nota fiscal, onde ele vai listar todas as notas, caso nem tenha, ele informa que não existe registro no programa
-void ListagemNota() {
-    struct Nota *buscar = notasfiscais;
-    int i = 0;
-
-    system(CLEAR);
-    printf("===== CANCELAMENTO DE COMPRAS =====\n\n");
-
-    while (buscar != NULL) {
-        printf("ID da Nota Fiscal: %i\n", buscar->notaFiscal);
-        printf("CPF do Cliente: %s\n", buscar->cpf);
-        printf("Nome do Cliente: %s\n", buscar->nome);
-        printf("Origem: %s\n", buscar->origem);
-        printf("Destino: %s\n", buscar->destino);
-        printf("Data: %s\n", buscar->data);
-        printf("Horário: %s\n", buscar->horario);
-        printf("Preço: R$%i\n", buscar->preco);
-        printf("========================\n");
-
-        buscar = buscar->prox_Nota;
-        i++;
-        Sleep(1000);
-    }
-
-    if (i == 0) {
-        printf("Nenhuma nota fiscal foi cadastrada!!!\n");
-        Sleep(2000);
-    }
-
-    printf("Pressione qualquer tecla para voltar ao menu...\n");
-    getch();
-}
-
-
-// Menu principal atualizado (usando a função genérica mostrarMenu)
+// Menu principal
 int main() {
     setlocale(LC_ALL, "");
 
     const char *opcoes_menu_principal[] = {
-        "1. Listar Rotas Disponíveis",
-        "2. Destinos Mais Populares",
-        "3. Destinos Mais Acessíveis",
-        "4. Listar Nota Fiscais",
-        "5. Sair"
+        "1. Listar Nota Fiscais",
+		"2. Área do Cliente",
+		"3. Rotas",
+        "4. Sair"
     };
-
     int num_opcoes_menu_principal = sizeof(opcoes_menu_principal) / sizeof(opcoes_menu_principal[0]);
 
     int escolha;
     struct cliente *head_cliente = NULL; // Inicializa a lista de clientes
 
-
     do {
-        escolha = mostrarMenu("MENU DE ROTAS", opcoes_menu_principal, num_opcoes_menu_principal);
+        escolha = mostrarMenu("MENU FUNCIONÁRIO", opcoes_menu_principal, num_opcoes_menu_principal);
 
         switch (escolha) {
             case 0:
-                listarRotas(&head_cliente); // Passa o endereço de head_cliente
-                break;
-            case 1:
-                filtrarRotas(1, &head_cliente); // Passa o endereço de head_cliente
-                break;
-            case 2:
-                filtrarRotas(2, &head_cliente); // Passa o endereço de head_cliente
-                break;
-            case 3:
                 ListagemNota(); //Listagem de NotaFiscal
                 break;
-
-            case 4:
+            case 1:
+                menuCliente(&head_cliente);
+                break;
+            case 2:
+                listarRotas(&head_cliente);
+                break;
+            case 3:
                 printf("Encerrando o programa. Até mais!\n");
                 break;
         }
-    } while (escolha != 4); // 3 é o índice da opção "Sair"
+    } while (escolha != 3); // 3 é o índice da opção "Sair"
 
     // Liberação de memória dos clientes cadastrados
     struct cliente *temp;
