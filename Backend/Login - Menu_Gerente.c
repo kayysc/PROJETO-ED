@@ -39,75 +39,6 @@ typedef struct {
 FuncionarioCadastro funcionarios[100];  // Array global para armazenar os funcionários
 int num_funcionarios = 0;               // Variável global para o número
 
-// Animação de barco navegando no terminal
-void animarBarco() {
-    const char *frames[] = {
-    	"\n\n"
-        "       ~~~~~~            \n"
-        "     ~~~~~~~~~~          \n"
-        "    ~~~~~~~~~~~~         \n"
-        "   __|____|_____\\____    \n"
-        "  |                |      \n"
-        "  |  BANZEIRO  |~~~   \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
-        "\n\n"
-        "     ~~~~~~~~~~           \n"
-        "   ~~~~~~~~~~~~~~~        \n"
-        "  ~~~~~~~~~~~~~~~~~~~     \n"
-        " __|____|______/_____\\_   \n"
-        "|                |        \n"
-        "|  BANZEIRO  | ~~~~   \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
-        "\n\n"
-        "   ~~~~~~~~~~~~~~~~       \n"
-        " ~~~~~~~~~~~~~~~~~~~~     \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~   \n"
-        "____|___|_______/_____\\_  \n"
-        "|                |        \n"
-        "|  BANZEIRO  | ~~~~~  \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
-    };
-    
-
-    // Loop para exibir os frames em sequência, criando a animação
-    int i;
-	for ( i = 0; i < 10; i++) {
-        system(CLEAR);
-        printf("%s", frames[i % 3]);
-        fflush(stdout);  // Garante que o frame seja exibido
-        SLEEP(300);  // Espera 300ms entre os frames
-    }
-}
-
-void animacaoBarco() {
-	const char *frames[] = {
-    "\n\n"
-	"   ~     ~ \n"
-    "      ~    ~   \n"
-    "    ~    ~    ~   ~   ~ \n"
-    "        ~      \n",
-    "   ~  \n"
-    "      ~    ~ \n"
-    "    ~    ~\n"
-    "       \n",
-    "   ~     ~    ~\n"
-    "      ~    ~      ~    ~\n"
-    "    ~    ~    ~   ~   ~   ~\n"
-    "        ~      ~     ~\n",
-	
-	};
-
-	 int i;
-	for ( i = 0; i < 10; i++) {
-        system(CLEAR);
-        printf("%s", frames[i % 3]);
-        fflush(stdout);  // Garante que o frame seja exibido
-        SLEEP(300);  // Espera 300ms entre os frames
-	}
-		printf("\nBarco pronto para embarque!\n");
-		SLEEP(1500);
-}
-
 // Função para salvar dados do gerente em um arquivo
 void salvarGerente(const char *arquivo, Gerente *usuario) {
     FILE *fp = fopen(arquivo, "wb");
@@ -122,24 +53,6 @@ int carregarGerente(const char *arquivo, Gerente *usuario) {
     FILE *fp = fopen(arquivo, "rb");
     if (fp) {
         fread(usuario, sizeof(Gerente), 1, fp);
-        fclose(fp);
-        return 1; // Sucesso
-    }
-    return 0; // Falha
-}
-
-void salvarFuncionario(const char *arquivo, FuncionarioCadastro *usuario) {
-    FILE *fp = fopen(arquivo, "wb"); // Modo de escrita binária
-    if (fp) {
-        fwrite(usuario, sizeof(FuncionarioCadastro), 1, fp); // Salva os dados do funcionário em binário
-        fclose(fp);
-    }
-}
-
-int carregarFuncionario(const char *arquivo, FuncionarioCadastro *usuario) {
-    FILE *fp = fopen(arquivo, "rb"); // Modo de leitura binária
-    if (fp) {
-        fread(usuario, sizeof(FuncionarioCadastro), 1, fp); // Carrega os dados do funcionário em binário
         fclose(fp);
         return 1; // Sucesso
     }
@@ -359,10 +272,8 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
     funcionarios[*num_funcionarios] = novo_func;
     (*num_funcionarios)++;
 
-    // Salva os dados do funcionário em um arquivo
-    char nome_arquivo[50];
-    sprintf(nome_arquivo, "%s.dat", novo_func.usuario); // Nome do arquivo = usuario.dat
-    salvarFuncionario(nome_arquivo, &novo_func);
+    // Salva todos os funcionários após o cadastro
+    salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, *num_funcionarios);
 
     printf("\nParabéns %s, oficialmente contratado!!!\n", novo_func.nome);
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
@@ -372,14 +283,8 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
 void listarFuncionarios(FuncionarioCadastro *funcionarios, int num_funcionarios) {
     system(CLEAR);
 
-    // Carrega os dados dos funcionários dos arquivos
-    for (i = 0; i < num_funcionarios; i++) {
-        char nome_arquivo[50];
-        sprintf(nome_arquivo, "%s.dat", funcionarios[i].usuario);
-        if (!carregarFuncionario(nome_arquivo, &funcionarios[i])) {
-            printf("Erro ao carregar funcionário %s\n", nome_arquivo);
-        }
-    }
+    // Carrega todos os funcionários do arquivo "funcionarios.dat"
+    carregarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, &num_funcionarios);
 
     if (num_funcionarios == 0) {
         printf("Nenhum funcionário cadastrado.\n");
@@ -423,15 +328,6 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
         return;
     }
 
-    // Carrega os dados do funcionário do arquivo
-    char nome_arquivo[50];
-    sprintf(nome_arquivo, "%s.dat", funcionarios[posicao].usuario);
-    if (carregarFuncionario(nome_arquivo, &funcionarios[posicao])) {
-        printf("Funcionário carregado com sucesso\n");
-    } else {
-        printf("Erro ao carregar funcionário\n");
-    }
-
     // Altera os dados do funcionário
     printf("========= ALTERAR FUNCIONÁRIO =========\n");
     printf("Digite os novos dados do funcionário:\n");
@@ -464,9 +360,8 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     fgets(funcionarios[posicao].senha, 20, stdin);
     strtok(funcionarios[posicao].senha, "\n");
 
-    // Salva os dados atualizados do funcionário em um arquivo
-    sprintf(nome_arquivo, "%s.dat", funcionarios[posicao].usuario);
-    salvarFuncionario(nome_arquivo, &funcionarios[posicao]);
+    // Salva todos os funcionários após a alteração
+    salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, num_funcionarios);
 
     printf("Dados do funcionário alterados com sucesso!\n");
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
@@ -503,12 +398,9 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     char confirmacao = getch();
 
     if (confirmacao == 'S' || confirmacao == 's') {
-        // Remove o funcionário do array e seu arquivo
+        // Remove o funcionário do array
         char nome_arquivo[50];
         sprintf(nome_arquivo, "%s.dat", funcionarios[posicao].usuario);
-
-        // Carrega os dados do funcionário do arquivo (para ter certeza de que o nome de usuário está correto)
-        carregarFuncionario(nome_arquivo, &funcionarios[posicao]);
 
         remove(nome_arquivo);
 
@@ -516,6 +408,9 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
             funcionarios[i] = funcionarios[i + 1];
         }
         (*num_funcionarios)--;
+
+        // Salva todos os funcionários após a exclusão
+        salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, *num_funcionarios);
 
         printf("Funcionário excluído com sucesso!\n");
     } else {
@@ -681,7 +576,6 @@ void login() {
                     system(CLEAR);
                     printf("Bem-vindo, %s! Aguarde um momento...\n", gerente.nome);
                     Sleep(4200);
-					animarBarco();
                     system("cls");
                     menuGerente();
                     return;
@@ -691,30 +585,27 @@ void login() {
                     system("cls");
                 }
             } else {
-                // Se não for gerente, tenta carregar como funcionário
-                char nome_arquivo[50];
-                sprintf(nome_arquivo, "%s.dat", login);
-                if (carregarFuncionario(nome_arquivo, &funcionario)) {
-                    if (strcmp(funcionario.senha, senha) == 0) {
-                        printf("\n\n\tBem-vindo, %s!\n", funcionario.nome);
+                // Se não for gerente, verifica se é funcionário
+                for (i = 0; i < num_funcionarios; i++) {
+                    if (strcmp(funcionarios[i].usuario, login) == 0 && 
+                        strcmp(funcionarios[i].senha, senha) == 0) {
+                        printf("\n\n\tBem-vindo, %s!\n", funcionarios[i].nome);
                         Sleep(4200);
                         system("cls");
                         // menuFuncionario(); // Implementação futura do menu do funcionário
                         return;
-                    } else {
-                        printf("Senha incorreta!\n");
-                        Sleep(2200);
-                        system("cls");
                     }
-                } else {
-                    printf("Usuário não encontrado!\n");
-                    Sleep(2200);
-                    system("cls");
                 }
+
+                // Se o loop terminar sem encontrar o funcionário
+                printf("Usuário não encontrado ou senha incorreta!\n");
+                Sleep(2200);
+                system("cls");
             }
         }
     } while (opcao != 2);
 }
+
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
@@ -726,8 +617,6 @@ int main() {
     if (!carregarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, &num_funcionarios)) {
         printf("Nenhum funcionário encontrado. Inicializando com lista vazia.\n");
     }
-
-    // **Remove o loop for que tentava carregar os funcionários individualmente**
 
     printf("Número de funcionários carregados: %d\n", num_funcionarios);
 
