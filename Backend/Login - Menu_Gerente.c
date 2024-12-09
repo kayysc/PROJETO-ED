@@ -24,7 +24,7 @@ typedef struct {
     int cod;
 } Gerente;
 
-// Estrutura para armazenar dados do funcion·rio (com todos os campos)
+// Estrutura para armazenar dados do funcion√°rio (com todos os campos)
 typedef struct {
     char nome[50];
     char cpf[15];
@@ -36,10 +36,10 @@ typedef struct {
     int cod;
 } FuncionarioCadastro;
 
-FuncionarioCadastro funcionarios[100];  // Array global para armazenar os funcion·rios
-int num_funcionarios = 0;               // Vari·vel global para o n˙mero
+FuncionarioCadastro funcionarios[100];  // Array global para armazenar os funcion√°rios
+int num_funcionarios = 0;               // Vari√°vel global para o n√∫mero
 
-// FunÁ„o para salvar dados do gerente em um arquivo
+// Fun√ß√£o para salvar dados do gerente em um arquivo
 void salvarGerente(const char *arquivo, Gerente *usuario) {
     FILE *fp = fopen(arquivo, "wb");
     if (fp) {
@@ -48,7 +48,7 @@ void salvarGerente(const char *arquivo, Gerente *usuario) {
     }
 }
 
-// FunÁ„o para carregar dados do gerente de um arquivo
+// Fun√ß√£o para carregar dados do gerente de um arquivo
 int carregarGerente(const char *arquivo, Gerente *usuario) {
     FILE *fp = fopen(arquivo, "rb");
     if (fp) {
@@ -60,24 +60,24 @@ int carregarGerente(const char *arquivo, Gerente *usuario) {
 }
 
 void salvarFuncionario(const char *arquivo, FuncionarioCadastro *usuario) {
-    FILE *fp = fopen(arquivo, "wb"); // Modo de escrita bin·ria
+    FILE *fp = fopen(arquivo, "wb"); // Modo de escrita bin√°ria
     if (fp) {
-        fwrite(usuario, sizeof(FuncionarioCadastro), 1, fp); // Salva os dados do funcion·rio em bin·rio
+        fwrite(usuario, sizeof(FuncionarioCadastro), 1, fp); // Salva os dados do funcion√°rio em bin√°rio
         fclose(fp);
     }
 }
 
 int carregarFuncionario(const char *arquivo, FuncionarioCadastro *usuario) {
-    FILE *fp = fopen(arquivo, "rb"); // Modo de leitura bin·ria
+    FILE *fp = fopen(arquivo, "rb"); // Modo de leitura bin√°ria
     if (fp) {
-        fread(usuario, sizeof(FuncionarioCadastro), 1, fp); // Carrega os dados do funcion·rio em bin·rio
+        fread(usuario, sizeof(FuncionarioCadastro), 1, fp); // Carrega os dados do funcion√°rio em bin√°rio
         fclose(fp);
         return 1; // Sucesso
     }
     return 0; // Falha
 }
 
-// FunÁ„o para salvar todos os funcion·rios em um ˙nico arquivo
+// Fun√ß√£o para salvar todos os funcion√°rios em um √∫nico arquivo
 void salvarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastro *funcionarios, int num_funcionarios) {
     FILE *fp = fopen(arquivo, "wb");
     if (fp) {
@@ -85,15 +85,15 @@ void salvarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastro
         fwrite(funcionarios, sizeof(FuncionarioCadastro), num_funcionarios, fp);
         fclose(fp);
     } else {
-        printf("Erro ao salvar os dados dos funcion·rios.\n");
+        printf("Erro ao salvar os dados dos funcion√°rios.\n");
     }
 }
 
 int carregarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastro *funcionarios, int *num_funcionarios) {
     FILE *fp = fopen(arquivo, "rb");
     if (fp) {
-        fread(num_funcionarios, sizeof(int), 1, fp); // LÍ o n˙mero de funcion·rios
-        fread(funcionarios, sizeof(FuncionarioCadastro), *num_funcionarios, fp); // LÍ o array de funcion·rios
+        fread(num_funcionarios, sizeof(int), 1, fp); // L√™ o n√∫mero de funcion√°rios
+        fread(funcionarios, sizeof(FuncionarioCadastro), *num_funcionarios, fp); // L√™ o array de funcion√°rios
 
         // Adiciona o caractere nulo ao final de cada string
         for (i = 0; i < *num_funcionarios; i++) {
@@ -117,26 +117,26 @@ void setColor(int color) {
     SetConsoleTextAttribute(hConsole, color);
 }
 
-// FunÁ„o para exibir o menu do gerente com navegaÁ„o por teclado
+// Fun√ß√£o para exibir o menu do gerente com navega√ß√£o por teclado
 int mostrarMenuGerente(const char *titulo, const char **opcoes, int numOpcoes) {
-    int posicao = 0; // Inicializa a posiÁ„o do cursor
+    int posicao = 0; // Inicializa a posi√ß√£o do cursor
     int tecla;
 
     do {
         system(CLEAR);
-        printf("======= %s =======\n", titulo); // Exibe o tÌtulo do menu
+        printf("======= %s =======\n", titulo); // Exibe o t√≠tulo do menu
 
-        // Exibe as opÁıes do menu com a seta indicando a opÁ„o atual
+        // Exibe as op√ß√µes do menu com a seta indicando a op√ß√£o atual
         for (i = 0; i < numOpcoes; i++) {
             if (posicao == i) {
-                setColor(14); // Amarelo para a opÁ„o selecionada
+                setColor(14); // Amarelo para a op√ß√£o selecionada
                 printf("-> %s\n", opcoes[i]);
             } else {
-                setColor(7); // Branco para as outras opÁıes
+                setColor(7); // Branco para as outras op√ß√µes
                 printf("   %s\n", opcoes[i]);
             }
         }
-        setColor(7); // Reset para a cor padr„o
+        setColor(7); // Reset para a cor padr√£o
 
         tecla = _getch();
         if (tecla == 224) { // Teclas de seta
@@ -150,14 +150,14 @@ int mostrarMenuGerente(const char *titulo, const char **opcoes, int numOpcoes) {
                     break;
             }
         } else if (tecla == 13) { // Enter
-            return posicao + 1; // Retorna a opÁ„o selecionada (1-based)
+            return posicao + 1; // Retorna a op√ß√£o selecionada (1-based)
         }
     } while (tecla != 27); // ESC para sair do menu
 
-    return 0; // Retorna 0 se o usu·rio pressionar ESC
+    return 0; // Retorna 0 se o usu√°rio pressionar ESC
 }
 
-// FunÁ„o para validar e formatar CPF
+// Fun√ß√£o para validar e formatar CPF
 void ler_cpf_formatado(char *cpf) {
     int pos = 0;
     char c;
@@ -185,7 +185,7 @@ void ler_cpf_formatado(char *cpf) {
     printf("\n");
 }
 
-// FunÁ„o para validar e formatar telefone
+// Fun√ß√£o para validar e formatar telefone
 void ler_telefone_formatado(char *telefone) {
     int pos = 0;
     char c;
@@ -217,11 +217,11 @@ void ler_telefone_formatado(char *telefone) {
     printf("\n");
 }
 
-// FunÁ„o para validar e formatar n˙mero da conta banc·ria
+// Fun√ß√£o para validar e formatar n√∫mero da conta banc√°ria
 void ler_conta_bancaria_formatada(char *conta) {
     int pos = 0;
     char c;
-    printf("Conta Banc·ria (xxxxxxxx-x): ");
+    printf("Conta Banc√°ria (xxxxxxxx-x): ");
     while (pos < 10) {
         c = getch();
         if (c == '\b' && pos > 0) {
@@ -243,10 +243,10 @@ void ler_conta_bancaria_formatada(char *conta) {
     printf("\n");
 }
 
-// FunÁ„o para cadastrar um novo funcion·rio
+// Fun√ß√£o para cadastrar um novo funcion√°rio
 void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios) {
     if (*num_funcionarios >= 100) {
-        printf("Limite m·ximo de funcion·rios atingido!\n");
+        printf("Limite m√°ximo de funcion√°rios atingido!\n");
         return;
     }
 
@@ -274,10 +274,10 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
         ler_conta_bancaria_formatada(novo_func.conta_bancaria);
     } while (strlen(novo_func.conta_bancaria) != 10);
 
-    // Define o cÛdigo do funcion·rio
+    // Define o c√≥digo do funcion√°rio
     novo_func.cod = *num_funcionarios + 1;
 
-    printf("Usu·rio: ");
+    printf("Usu√°rio: ");
     fflush(stdin);
     fgets(novo_func.usuario, 20, stdin);
     strtok(novo_func.usuario, "\n");
@@ -290,12 +290,12 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
     funcionarios[*num_funcionarios] = novo_func;
     (*num_funcionarios)++;
 
-    // Salva os dados do funcion·rio em um arquivo
+    // Salva os dados do funcion√°rio em um arquivo
     char nome_arquivo[50];
     sprintf(nome_arquivo, "%s.dat", novo_func.usuario); // Nome do arquivo = usuario.dat
     salvarFuncionario(nome_arquivo, &novo_func);
 
-    printf("\nParabÈns %s, oficialmente contratado!!!\n", novo_func.nome);
+    printf("\nParab√©ns %s, oficialmente contratado!!!\n", novo_func.nome);
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
     getch();
 }
@@ -303,26 +303,26 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
 void listarFuncionarios(FuncionarioCadastro *funcionarios, int num_funcionarios) {
     system(CLEAR);
 
-    // Carrega os dados dos funcion·rios dos arquivos
+    // Carrega os dados dos funcion√°rios dos arquivos
     for (i = 0; i < num_funcionarios; i++) {
         char nome_arquivo[50];
         sprintf(nome_arquivo, "%s.dat", funcionarios[i].usuario);
         if (!carregarFuncionario(nome_arquivo, &funcionarios[i])) {
-            printf("Erro ao carregar funcion·rio %s\n", nome_arquivo);
+            printf("Erro ao carregar funcion√°rio %s\n", nome_arquivo);
         }
     }
 
     if (num_funcionarios == 0) {
-        printf("Nenhum funcion·rio cadastrado.\n");
+        printf("Nenhum funcion√°rio cadastrado.\n");
     } else {
-        printf("========= LISTA DE FUNCION¡RIOS =========\n");
+        printf("========= LISTA DE FUNCION√ÅRIOS =========\n");
         for (i = 0; i < num_funcionarios; i++) {
             printf("Nome: %s\n", funcionarios[i].nome);
             printf("CPF: %s\n", funcionarios[i].cpf);
             printf("Telefone: %s\n", funcionarios[i].telefone);
             printf("Email: %s\n", funcionarios[i].email);
-            printf("Conta Banc·ria: %s\n", funcionarios[i].conta_bancaria);
-            printf("Usu·rio: %s\n", funcionarios[i].usuario);
+            printf("Conta Banc√°ria: %s\n", funcionarios[i].conta_bancaria);
+            printf("Usu√°rio: %s\n", funcionarios[i].usuario);
             printf("------------------------------------\n");
         }
     }
@@ -335,11 +335,11 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     int i, posicao = -1;
 
     system(CLEAR);
-    printf("========= ALTERAR FUNCION¡RIO =========\n");
-    printf("Digite o CPF do funcion·rio: ");
+    printf("========= ALTERAR FUNCION√ÅRIO =========\n");
+    printf("Digite o CPF do funcion√°rio: ");
     ler_cpf_formatado(cpf_busca);
 
-    // Busca o funcion·rio pelo CPF
+    // Busca o funcion√°rio pelo CPF
     for (i = 0; i < num_funcionarios; i++) {
         if (strcmp(funcionarios[i].cpf, cpf_busca) == 0) {
             posicao = i;
@@ -348,24 +348,24 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     }
 
     if (posicao == -1) {
-        printf("Funcion·rio n„o encontrado.\n");
+        printf("Funcion√°rio n√£o encontrado.\n");
         printf("Pressione qualquer tecla para voltar ao menu principal.\n");
         getch();
         return;
     }
 
-    // Carrega os dados do funcion·rio do arquivo
+    // Carrega os dados do funcion√°rio do arquivo
     char nome_arquivo[50];
     sprintf(nome_arquivo, "%s.dat", funcionarios[posicao].usuario);
     if (carregarFuncionario(nome_arquivo, &funcionarios[posicao])) {
-        printf("Funcion·rio carregado com sucesso\n");
+        printf("Funcion√°rio carregado com sucesso\n");
     } else {
-        printf("Erro ao carregar funcion·rio\n");
+        printf("Erro ao carregar funcion√°rio\n");
     }
 
-    // Altera os dados do funcion·rio
-    printf("========= ALTERAR FUNCION¡RIO =========\n");
-    printf("Digite os novos dados do funcion·rio:\n");
+    // Altera os dados do funcion√°rio
+    printf("========= ALTERAR FUNCION√ÅRIO =========\n");
+    printf("Digite os novos dados do funcion√°rio:\n");
 
     printf("Nome: ");
     fflush(stdin);
@@ -385,7 +385,7 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
         ler_conta_bancaria_formatada(funcionarios[posicao].conta_bancaria);
     } while (strlen(funcionarios[posicao].conta_bancaria) != 11);
 
-    printf("Usu·rio: ");
+    printf("Usu√°rio: ");
     fflush(stdin);
     fgets(funcionarios[posicao].usuario, 20, stdin);
     strtok(funcionarios[posicao].usuario, "\n");
@@ -395,11 +395,11 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     fgets(funcionarios[posicao].senha, 20, stdin);
     strtok(funcionarios[posicao].senha, "\n");
 
-    // Salva os dados atualizados do funcion·rio em um arquivo
+    // Salva os dados atualizados do funcion√°rio em um arquivo
     sprintf(nome_arquivo, "%s.dat", funcionarios[posicao].usuario);
     salvarFuncionario(nome_arquivo, &funcionarios[posicao]);
 
-    printf("Dados do funcion·rio alterados com sucesso!\n");
+    printf("Dados do funcion√°rio alterados com sucesso!\n");
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
     getch();
 }
@@ -409,11 +409,11 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     int i, posicao = -1;
 
     system(CLEAR);
-    printf("========= EXCLUIR FUNCION¡RIO =========\n");
-    printf("Digite o CPF do funcion·rio: ");
+    printf("========= EXCLUIR FUNCION√ÅRIO =========\n");
+    printf("Digite o CPF do funcion√°rio: ");
     ler_cpf_formatado(cpf_busca);
 
-    // Busca o funcion·rio pelo CPF
+    // Busca o funcion√°rio pelo CPF
     for (i = 0; i < *num_funcionarios; i++) {
         if (strcmp(funcionarios[i].cpf, cpf_busca) == 0) {
             posicao = i;
@@ -422,23 +422,23 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     }
 
     if (posicao == -1) {
-        printf("Funcion·rio n„o encontrado.\n");
+        printf("Funcion√°rio n√£o encontrado.\n");
         printf("Pressione qualquer tecla para voltar ao menu principal.\n");
         getch();
         return;
     }
 
-    // ConfirmaÁ„o da exclus„o
-    printf("========= EXCLUIR FUNCION¡RIO =========\n");
-    printf("Tem certeza que deseja excluir o funcion·rio %s? (S/N): ", funcionarios[posicao].nome);
+    // Confirma√ß√£o da exclus√£o
+    printf("========= EXCLUIR FUNCION√ÅRIO =========\n");
+    printf("Tem certeza que deseja excluir o funcion√°rio %s? (S/N): ", funcionarios[posicao].nome);
     char confirmacao = getch();
 
     if (confirmacao == 'S' || confirmacao == 's') {
-        // Remove o funcion·rio do array e seu arquivo
+        // Remove o funcion√°rio do array e seu arquivo
         char nome_arquivo[50];
         sprintf(nome_arquivo, "%s.dat", funcionarios[posicao].usuario);
 
-        // Carrega os dados do funcion·rio do arquivo (para ter certeza de que o nome de usu·rio est· correto)
+        // Carrega os dados do funcion√°rio do arquivo (para ter certeza de que o nome de usu√°rio est√° correto)
         carregarFuncionario(nome_arquivo, &funcionarios[posicao]);
 
         remove(nome_arquivo);
@@ -448,9 +448,9 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
         }
         (*num_funcionarios)--;
 
-        printf("Funcion·rio excluÌdo com sucesso!\n");
+        printf("Funcion√°rio exclu√≠do com sucesso!\n");
     } else {
-        printf("Exclus„o cancelada!\n");
+        printf("Exclus√£o cancelada!\n");
     }
 
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
@@ -462,8 +462,8 @@ void menuGerente() {
     int escolha;
 
     const char *opcoes_menu_gerente[] = {
-        "1. Cadastro de funcion·rio",
-        "2. Acessar Funcion·rio",
+        "1. Cadastro de funcion√°rio",
+        "2. Acessar Funcion√°rio",
         "3. Leis do Consumidor",
         "4. Sair"
     };
@@ -477,19 +477,19 @@ void menuGerente() {
                 system(CLEAR);
                 cadastrarFuncionario(funcionarios, &num_funcionarios);
                 break;
-            case 2: // Acessar Funcion·rio
+            case 2: // Acessar Funcion√°rio
                 {
                     int escolha_submenu;
                     const char *opcoes_submenu_acessar_funcionario[] = {
-                        "1. Alterar dados do funcion·rio",
-                        "2. Excluir funcion·rio",
-                        "3. Listar funcion·rios",
+                        "1. Alterar dados do funcion√°rio",
+                        "2. Excluir funcion√°rio",
+                        "3. Listar funcion√°rios",
                         "4. Voltar"
                     };
                     int num_opcoes_submenu = sizeof(opcoes_submenu_acessar_funcionario) / sizeof(opcoes_submenu_acessar_funcionario[0]);
 
                     do {
-                        escolha_submenu = mostrarMenuGerente("ACESSAR FUNCION¡RIO", opcoes_submenu_acessar_funcionario, num_opcoes_submenu);
+                        escolha_submenu = mostrarMenuGerente("ACESSAR FUNCION√ÅRIO", opcoes_submenu_acessar_funcionario, num_opcoes_submenu);
 
                         switch (escolha_submenu) {
                             case 1:
@@ -500,7 +500,7 @@ void menuGerente() {
                                 system(CLEAR);
                                 excluirFuncionario(funcionarios, &num_funcionarios);
                                 break;
-                            case 3: // Listar funcion·rios
+                            case 3: // Listar funcion√°rios
                                 system(CLEAR);
                                 listarFuncionarios(funcionarios, num_funcionarios);
                                 break;
@@ -508,14 +508,14 @@ void menuGerente() {
                                 // Voltar ao menu principal
                                 break;
                             default:
-                                printf("OpÁ„o inv·lida!\n");
+                                printf("Op√ß√£o inv√°lida!\n");
                         }
                     } while (escolha_submenu != 4);
                 }
                 break;
             case 3:
                 system(CLEAR);
-                printf("OpÁ„o 3 escolhida (Leis do Consumidor).\n");
+                printf("Op√ß√£o 3 escolhida (Leis do Consumidor).\n");
                 printf("Pressione qualquer tecla para voltar ao menu.\n");
                 getch();
                 break;
@@ -523,7 +523,7 @@ void menuGerente() {
                 printf("Saindo do menu do gerente...\n");
                 break;
             default:
-                printf("OpÁ„o inv·lida!\n");
+                printf("Op√ß√£o inv√°lida!\n");
         }
     } while (escolha != 4);
 }
@@ -579,7 +579,7 @@ void login() {
         }
 
         if (opcao == 1) {
-            printf("   Usu·rio: ");
+            printf("   Usu√°rio: ");
             scanf("%s", login);
             printf("   Senha: ");
 
@@ -601,7 +601,7 @@ void login() {
             }
             printf("\n");
 
-            // Tenta carregar o usu·rio como gerente
+            // Tenta carregar o usu√°rio como gerente
             if (carregarGerente(login, &gerente)) {
                 if (strcmp(gerente.senha, senha) == 0) {
                     system(CLEAR);
@@ -616,7 +616,7 @@ void login() {
                     system("cls");
                 }
             } else {
-                // Se n„o for gerente, tenta carregar como funcion·rio
+                // Se n√£o for gerente, tenta carregar como funcion√°rio
                 char nome_arquivo[50];
                 sprintf(nome_arquivo, "%s.dat", login);
                 if (carregarFuncionario(nome_arquivo, &funcionario)) {
@@ -624,7 +624,7 @@ void login() {
                         printf("\n\n\tBem-vindo, %s!\n", funcionario.nome);
                         Sleep(4200);
                         system("cls");
-                        // menuFuncionario(); // ImplementaÁ„o futura do menu do funcion·rio
+                        // menuFuncionario(); // Implementa√ß√£o futura do menu do funcion√°rio
                         return;
                     } else {
                         printf("Senha incorreta!\n");
@@ -632,7 +632,7 @@ void login() {
                         system("cls");
                     }
                 } else {
-                    printf("Usu·rio n„o encontrado!\n");
+                    printf("Usu√°rio n√£o encontrado!\n");
                     Sleep(2200);
                     system("cls");
                 }
@@ -647,18 +647,18 @@ int main() {
     Gerente gerente = {"Ana", "admin", "1234", 01};
     salvarGerente("admin", &gerente);
 
-    // Carrega todos os funcion·rios do arquivo "funcionarios.dat"
+    // Carrega todos os funcion√°rios do arquivo "funcionarios.dat"
     if (!carregarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, &num_funcionarios)) {
-        printf("Nenhum funcion·rio encontrado. Inicializando com lista vazia.\n");
+        printf("Nenhum funcion√°rio encontrado. Inicializando com lista vazia.\n");
     }
 
-    // **Remove o loop for que tentava carregar os funcion·rios individualmente**
+    // **Remove o loop for que tentava carregar os funcion√°rios individualmente**
 
-    printf("N˙mero de funcion·rios carregados: %d\n", num_funcionarios);
+    printf("N√∫mero de funcion√°rios carregados: %d\n", num_funcionarios);
 
     login();
 
-    // Salva todos os funcion·rios em "funcionarios.dat" antes de sair
+    // Salva todos os funcion√°rios em "funcionarios.dat" antes de sair
     salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, num_funcionarios);
 
     return 0;
