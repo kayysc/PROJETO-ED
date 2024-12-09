@@ -669,14 +669,8 @@ void listarRotas(struct cliente **head_cliente) {
             detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente);
         } 
         liberarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas);
-    }else if (escolha == MAX_DESTINOS){
-    	 // Libera a memória alocada para as strings
-    	for (i = 0; i <= MAX_DESTINOS; i++) {
-        	free((char *)opcoes[i]);
     }
-	}
 }
-
 
 // Menu da Área do Cliente
 void menuCliente(struct cliente **head_cliente) { // Recebe o endereço do ponteiro head_cliente
