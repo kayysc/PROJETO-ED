@@ -39,6 +39,75 @@ typedef struct {
 FuncionarioCadastro funcionarios[100];  // Array global para armazenar os funcionários
 int num_funcionarios = 0;               // Variável global para o número
 
+// Animação de barco navegando no terminal
+void animarBarco() {
+    const char *frames[] = {
+    	"\n\n"
+        "       ~~~~~~            \n"
+        "     ~~~~~~~~~~          \n"
+        "    ~~~~~~~~~~~~         \n"
+        "   __|____|_____\\____    \n"
+        "  |                |      \n"
+        "  |  BANZEIRO  |~~~   \n"
+        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
+        "\n\n"
+        "     ~~~~~~~~~~           \n"
+        "   ~~~~~~~~~~~~~~~        \n"
+        "  ~~~~~~~~~~~~~~~~~~~     \n"
+        " __|____|______/_____\\_   \n"
+        "|                |        \n"
+        "|  BANZEIRO  | ~~~~   \n"
+        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
+        "\n\n"
+        "   ~~~~~~~~~~~~~~~~       \n"
+        " ~~~~~~~~~~~~~~~~~~~~     \n"
+        "~~~~~~~~~~~~~~~~~~~~~~~   \n"
+        "____|___|_______/_____\\_  \n"
+        "|                |        \n"
+        "|  BANZEIRO  | ~~~~~  \n"
+        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
+    };
+    
+
+    // Loop para exibir os frames em sequência, criando a animação
+    int i;
+	for ( i = 0; i < 10; i++) {
+        system(CLEAR);
+        printf("%s", frames[i % 3]);
+        fflush(stdout);  // Garante que o frame seja exibido
+        SLEEP(300);  // Espera 300ms entre os frames
+    }
+}
+
+void animacaoBarco() {
+	const char *frames[] = {
+    "\n\n"
+	"   ~     ~ \n"
+    "      ~    ~   \n"
+    "    ~    ~    ~   ~   ~ \n"
+    "        ~      \n",
+    "   ~  \n"
+    "      ~    ~ \n"
+    "    ~    ~\n"
+    "       \n",
+    "   ~     ~    ~\n"
+    "      ~    ~      ~    ~\n"
+    "    ~    ~    ~   ~   ~   ~\n"
+    "        ~      ~     ~\n",
+	
+	};
+
+	 int i;
+	for ( i = 0; i < 10; i++) {
+        system(CLEAR);
+        printf("%s", frames[i % 3]);
+        fflush(stdout);  // Garante que o frame seja exibido
+        SLEEP(300);  // Espera 300ms entre os frames
+	}
+		printf("\nBarco pronto para embarque!\n");
+		SLEEP(1500);
+}
+
 // Função para salvar dados do gerente em um arquivo
 void salvarGerente(const char *arquivo, Gerente *usuario) {
     FILE *fp = fopen(arquivo, "wb");
@@ -457,6 +526,8 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     getch();
 }
 
+void login();
+
 // Menu do Gerente
 void menuGerente() {
     int escolha;
@@ -505,7 +576,6 @@ void menuGerente() {
                                 listarFuncionarios(funcionarios, num_funcionarios);
                                 break;
                             case 4: // Voltar ao menu principal
-                                // Voltar ao menu principal
                                 break;
                             default:
                                 printf("Opção inválida!\n");
@@ -521,6 +591,8 @@ void menuGerente() {
                 break;
             case 4:
                 printf("Saindo do menu do gerente...\n");
+                Sleep(3200);
+                login();
                 break;
             default:
                 printf("Opção inválida!\n");
@@ -579,6 +651,8 @@ void login() {
         }
 
         if (opcao == 1) {
+        	system(CLEAR);
+        	printf("\n ============= BEM VINDO AO BANZEIRO!!! =============\n\n");
             printf("   Usuário: ");
             scanf("%s", login);
             printf("   Senha: ");
@@ -607,6 +681,7 @@ void login() {
                     system(CLEAR);
                     printf("Bem-vindo, %s! Aguarde um momento...\n", gerente.nome);
                     Sleep(4200);
+					animarBarco();
                     system("cls");
                     menuGerente();
                     return;
