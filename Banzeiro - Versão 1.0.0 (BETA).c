@@ -32,29 +32,29 @@ void setColor(int color) {
 void animarBarco() {
     const char *frames[] = {
     	"\n\n"
-        "       ~~~~~~            \n"
-        "     ~~~~~~~~~~          \n"
-        "    ~~~~~~~~~~~~         \n"
-        "   __|____|_____\\____    \n"
-        "  |                |      \n"
-        "  |  BANZEIRO  |~~~   \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
+        "              ~~~~~~            \n"
+        "            ~~~~~~~~~~          \n"
+        "           ~~~~~~~~~~~~         \n"
+        "          __|____|_____\\____    \n"
+        "         |                |      \n"
+        "         |  BANZEIRO  |~~~   \n"
+        "       ~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
         "\n\n"
-        "     ~~~~~~~~~~           \n"
-        "   ~~~~~~~~~~~~~~~        \n"
-        "  ~~~~~~~~~~~~~~~~~~~     \n"
-        " __|____|______/_____\\_   \n"
-        "|                |        \n"
-        "|  BANZEIRO  | ~~~~   \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
+        "            ~~~~~~~~~~           \n"
+        "          ~~~~~~~~~~~~~~~        \n"
+        "         ~~~~~~~~~~~~~~~~~~~     \n"
+        "        __|____|______/_____\\_   \n"
+        "       |                |        \n"
+        "       |  BANZEIRO  | ~~~~   \n"
+        "       ~~~~~~~~~~~~~~~~~~~~~~~~~ \n",
         "\n\n"
-        "   ~~~~~~~~~~~~~~~~       \n"
-        " ~~~~~~~~~~~~~~~~~~~~     \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~   \n"
-        "____|___|_______/_____\\_  \n"
-        "|                |        \n"
-        "|  BANZEIRO  | ~~~~~  \n"
-        "~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
+        "          ~~~~~~~~~~~~~~~~       \n"
+        "        ~~~~~~~~~~~~~~~~~~~~     \n"
+        "       ~~~~~~~~~~~~~~~~~~~~~~~   \n"
+        "       ____|___|_______/_____\\_  \n"
+        "       |                |        \n"
+        "       |  BANZEIRO  | ~~~~~  \n"
+        "       ~~~~~~~~~~~~~~~~~~~~~~~~~ \n"
     };
     
 
@@ -71,18 +71,18 @@ void animarBarco() {
 void animacaoBarco() {
 	const char *frames[] = {
     "\n\n"
-	"   ~     ~ \n"
-    "      ~    ~   \n"
-    "    ~    ~    ~   ~   ~ \n"
-    "        ~      \n",
-    "   ~  \n"
-    "      ~    ~ \n"
-    "    ~    ~\n"
-    "       \n",
-    "   ~     ~    ~\n"
-    "      ~    ~      ~    ~\n"
-    "    ~    ~    ~   ~   ~   ~\n"
-    "        ~      ~     ~\n",
+	"          ~     ~ \n"
+    "             ~    ~   \n"
+    "           ~    ~    ~   ~   ~ \n"
+    "               ~      \n",
+    "          ~  \n"
+    "             ~    ~ \n"
+    "           ~    ~\n"
+    "              \n",
+    "          ~     ~    ~\n"
+    "             ~    ~      ~    ~\n"
+    "           ~    ~    ~   ~   ~   ~\n"
+    "               ~      ~     ~\n",
 	
 	};
 
@@ -101,7 +101,7 @@ void animacaoBarco() {
 void ler_cpf_formatado(char *cpf) {
     int pos = 0;
     char c;
-    printf("CPF: ");
+    printf("       CPF: ");
     while (pos < 14) {
         c = getch();
         if (c == '\b' && pos > 0) {
@@ -139,7 +139,7 @@ void remover_formatacao_cpf(const char *cpf_formatado, char *cpf_limpo) {
 void ler_telefone_formatado(char *telefone) {
     int pos = 0;
     char c;
-    printf("Telefone: ");
+    printf("       Telefone: ");
     while (pos < 15) {
         c = getch();
         if (c == '\b' && pos > 0) {
@@ -171,7 +171,7 @@ void ler_telefone_formatado(char *telefone) {
 void ler_conta_bancaria_formatada(char *conta) {
     int pos = 0;
     char c;
-    printf("Conta Bancária (xxxxxxxx-x): ");
+    printf("       Conta Bancária (xxxxxxxx-x): ");
     while (pos < 10) {
         c = getch();
         if (c == '\b' && pos > 0) {
@@ -230,7 +230,7 @@ void ler_data_formatada(char *data) {
     int pos = 0;
     char c;
 
-    printf("Data de Nascimento (dd/mm/aaaa): ");
+    printf("       Data de Nascimento (dd/mm/aaaa): ");
     while (pos < 10) {
         c = getch();
         if (c == '\b' && pos > 0) {
@@ -266,16 +266,16 @@ int mostrarMenuGerente(const char *titulo, const char **opcoes, int numOpcoes) {
 
     do {
         system(CLEAR);
-        printf("======= %s =======\n", titulo); // Exibe o título do menu
+        printf("\n ============= %s =============\n\n", titulo); // Exibe o título do menu
 
         // Exibe as opções do menu com a seta indicando a opção atual
         for (i = 0; i < numOpcoes; i++) {
             if (posicao == i) {
                 setColor(14); // Amarelo para a opção selecionada
-                printf("-> %s\n", opcoes[i]);
+                printf("    -> %s\n", opcoes[i]);
             } else {
                 setColor(7); // Branco para as outras opções
-                printf("   %s\n", opcoes[i]);
+                printf("       %s\n", opcoes[i]);
             }
         }
         setColor(7); // Reset para a cor padrão
@@ -342,7 +342,7 @@ void salvarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastro
         fwrite(funcionarios, sizeof(FuncionarioCadastro), num_funcionarios, fp);
         fclose(fp);
     } else {
-        printf("Erro ao salvar os dados dos funcionários.\n");
+        printf("\n       Erro ao salvar os dados dos funcionários.\n");
     }
 }
 
@@ -372,13 +372,14 @@ int carregarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastr
 // Função para cadastrar um novo funcionário
 void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios) {
     if (*num_funcionarios >= 100) {
-        printf("Limite máximo de funcionários atingido!\n");
+        printf("\n       Limite máximo de funcionários atingido!\n");
         return;
     }
 
     FuncionarioCadastro novo_func;
-
-    printf("Nome: ");
+    
+    printf("\n ============= CADASTRO FUNCIONÁRIO =============\n\n");
+    printf("       Nome: ");
     fflush(stdin);
     fgets(novo_func.nome, 50, stdin);
     strtok(novo_func.nome, "\n");
@@ -391,7 +392,7 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
         ler_telefone_formatado(novo_func.telefone);
     } while (strlen(novo_func.telefone) != 15);
 
-    printf("Email: ");
+    printf("       Email: ");
     fflush(stdin);
     fgets(novo_func.email, 50, stdin);
     strtok(novo_func.email, "\n");
@@ -403,12 +404,12 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
     // Define o código do funcionário
     novo_func.cod = *num_funcionarios + 1;
 
-    printf("Usuário: ");
+    printf("       Usuário: ");
     fflush(stdin);
     fgets(novo_func.usuario, 20, stdin);
     strtok(novo_func.usuario, "\n");
 
-    printf("Senha: ");
+    printf("       Senha: ");
     fflush(stdin);
     fgets(novo_func.senha, 20, stdin);
     strtok(novo_func.senha, "\n");
@@ -419,7 +420,7 @@ void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionari
     // Salva todos os funcionários após o cadastro
     salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, *num_funcionarios);
 
-    printf("\nParabéns %s, oficialmente contratado!!!\n", novo_func.nome);
+    printf("\n       Parabéns %s, oficialmente contratado!!!\n", novo_func.nome);
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
     getch();
 }
@@ -431,7 +432,7 @@ void listarFuncionarios(FuncionarioCadastro *funcionarios, int num_funcionarios)
     carregarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, &num_funcionarios);
 
     if (num_funcionarios == 0) {
-        printf("Nenhum funcionário cadastrado.\n");
+        printf("\n       Nenhum funcionário cadastrado.\n");
     } else {
         printf("========= LISTA DE FUNCIONÁRIOS =========\n");
         for (i = 0; i < num_funcionarios; i++) {
@@ -454,7 +455,7 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
 
     system(CLEAR);
     printf("========= ALTERAR FUNCIONÁRIO =========\n");
-    printf("Digite o CPF do funcionário: ");
+    printf("\n       Digite o CPF do funcionário: ");
     ler_cpf_formatado(cpf_busca);
 
     // Busca o funcionário pelo CPF
@@ -466,7 +467,7 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     }
 
     if (posicao == -1) {
-        printf("Funcionário não encontrado.\n");
+        printf("\n       Funcionário não encontrado.\n");
         printf("Pressione qualquer tecla para voltar ao menu principal.\n");
         getch();
         return;
@@ -474,9 +475,9 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
 
     // Altera os dados do funcionário
     printf("========= ALTERAR FUNCIONÁRIO =========\n");
-    printf("Digite os novos dados do funcionário:\n");
+    printf("\n       Digite os novos dados do funcionário:\n");
 
-    printf("Nome: ");
+    printf("       Nome: ");
     fflush(stdin);
     fgets(funcionarios[posicao].nome, 50, stdin);
     strtok(funcionarios[posicao].nome, "\n");
@@ -485,7 +486,7 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
         ler_telefone_formatado(funcionarios[posicao].telefone);
     } while (strlen(funcionarios[posicao].telefone) != 15);
 
-    printf("Email: ");
+    printf("       Email: ");
     fflush(stdin);
     fgets(funcionarios[posicao].email, 50, stdin);
     strtok(funcionarios[posicao].email, "\n");
@@ -494,12 +495,12 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
         ler_conta_bancaria_formatada(funcionarios[posicao].conta_bancaria);
     } while (strlen(funcionarios[posicao].conta_bancaria) != 10);
 
-    printf("Usuário: ");
+    printf("       Usuário: ");
     fflush(stdin);
     fgets(funcionarios[posicao].usuario, 20, stdin);
     strtok(funcionarios[posicao].usuario, "\n");
 
-    printf("Senha: ");
+    printf("       Senha: ");
     fflush(stdin);
     fgets(funcionarios[posicao].senha, 20, stdin);
     strtok(funcionarios[posicao].senha, "\n");
@@ -507,7 +508,7 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     // Salva todos os funcionários após a alteração
     salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, num_funcionarios);
 
-    printf("Dados do funcionário alterados com sucesso!\n");
+    printf("\n       Dados do funcionário alterados com sucesso!\n");
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
     getch();
 }
@@ -518,7 +519,7 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
 
     system(CLEAR);
     printf("========= EXCLUIR FUNCIONÁRIO =========\n");
-    printf("Digite o CPF do funcionário: ");
+    printf("\n       Digite o CPF do funcionário: ");
     ler_cpf_formatado(cpf_busca);
 
     // Busca o funcionário pelo CPF
@@ -530,7 +531,7 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     }
 
     if (posicao == -1) {
-        printf("Funcionário não encontrado.\n");
+        printf("\n       Funcionário não encontrado.\n");
         printf("Pressione qualquer tecla para voltar ao menu principal.\n");
         getch();
         return;
@@ -538,7 +539,7 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
 
     // Confirmação da exclusão
     printf("========= EXCLUIR FUNCIONÁRIO =========\n");
-    printf("Tem certeza que deseja excluir o funcionário %s? (S/N): ", funcionarios[posicao].nome);
+    printf("\n       Tem certeza que deseja excluir o funcionário %s? (S/N): ", funcionarios[posicao].nome);
     char confirmacao = getch();
 
     if (confirmacao == 'S' || confirmacao == 's') {
@@ -556,9 +557,9 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
         // Salva todos os funcionários após a exclusão
         salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, *num_funcionarios);
 
-        printf("Funcionário excluído com sucesso!\n");
+        printf("\n       Funcionário excluído com sucesso!\n");
     } else {
-        printf("Exclusão cancelada!\n");
+        printf("\n       Exclusão cancelada!\n");
     }
 
     printf("Pressione qualquer tecla para voltar ao menu principal.\n");
@@ -572,10 +573,10 @@ void menuGerente() {
     int escolha;
 
     const char *opcoes_menu_gerente[] = {
-        "1. Cadastro de funcionário",
-        "2. Acessar Funcionário",
-        "3. Leis do Consumidor",
-        "4. Sair"
+        "Cadastro de funcionário",
+        "Acessar Funcionário",
+        "Leis do Consumidor",
+        "Sair"
     };
     int num_opcoes_menu_gerente = sizeof(opcoes_menu_gerente) / sizeof(opcoes_menu_gerente[0]);
 
@@ -591,10 +592,10 @@ void menuGerente() {
                 {
                     int escolha_submenu;
                     const char *opcoes_submenu_acessar_funcionario[] = {
-                        "1. Alterar dados do funcionário",
-                        "2. Excluir funcionário",
-                        "3. Listar funcionários",
-                        "4. Voltar"
+                        "Alterar dados do funcionário",
+                        "Excluir funcionário",
+                        "Listar funcionários",
+                        "Voltar"
                     };
                     int num_opcoes_submenu = sizeof(opcoes_submenu_acessar_funcionario) / sizeof(opcoes_submenu_acessar_funcionario[0]);
 
@@ -629,7 +630,9 @@ void menuGerente() {
                 getch();
                 break;
             case 4:
-                printf("Saindo do menu do gerente...\n");
+            	system("cls");
+            	printf("\n ============= MENU GERENTE =============\n\n");
+                printf("       Saindo do menu do gerente...\n");
                 Sleep(3200);
                 login();
                 break;
@@ -976,7 +979,7 @@ int mostrarMenu(const char *titulo, const char **opcoes, int numOpcoes) {
         // Exibe as opções do menu com a seta indicando a opção atual
         for (i = 0; i < numOpcoes; i++) {
             setColor(posicao == i ? 14 : 7); // Amarelo para a opção selecionada
-            printf("-> %s\n", opcoes[i]);
+            printf("       -> %s\n", opcoes[i]);
             setColor(7); // Reset para a cor padrão
         }
 
@@ -1158,9 +1161,9 @@ void listarRotas(struct cliente **head_cliente) {
 // Menu da Área do Cliente
 void menuCliente(struct cliente **head_cliente) { // Recebe o endereço do ponteiro head_cliente
     const char *opcoes[] = {
-        "1. Cadastrar Cliente",
-        "2. Buscar Cliente por CPF",
-        "3. Voltar"
+        "Cadastrar Cliente",
+        "Buscar Cliente por CPF",
+        "Voltar"
     };
     int escolha;
     char cpf_busca[15];
@@ -1195,10 +1198,10 @@ void login();
 
 void menuFuncionario(){
     const char *opcoes_menu_principal[] = {
-        "1. Listar Nota Fiscais",
-		"2. Área do Cliente",
-		"3. Rotas",
-        "4. Sair"
+        "Listar Nota Fiscais",
+		"Área do Cliente",
+		"Rotas",
+        "Sair"
     };
     int num_opcoes_menu_principal = sizeof(opcoes_menu_principal) / sizeof(opcoes_menu_principal[0]);
 
@@ -1251,17 +1254,17 @@ void login() {
 
         if (posicao == 0) {
             setColor(14);
-            printf("-> 1. Entrar\n");
+            printf("    -> Entrar\n");
         } else {
             setColor(7);
-            printf("   1. Entrar\n");
+            printf("       Entrar\n");
         }
         if (posicao == 1) {
             setColor(14);
-            printf("-> 2. Sair\n");
+            printf("    -> Sair\n");
         } else {
             setColor(7);
-            printf("   2. Sair\n");
+            printf("       Sair\n");
         }
         setColor(7);
 
@@ -1281,16 +1284,19 @@ void login() {
         }
 
         if (opcao == 2) {
-            printf("Saindo do sistema...\n");
+        	system("cls");
+        	printf("\n =============== SAINDO DO SISTEMA... ===============\n\n");
+        	Sleep(2200);
+        	printf("\n       Programa encerrado\n\n");
             exit(0);
         }
 
         if (opcao == 1) {
         	system(CLEAR);
         	printf("\n ============= BEM VINDO AO BANZEIRO!!! =============\n\n");
-            printf("   Usuário: ");
+            printf("       Usuário: ");
             scanf("%s", login);
-            printf("   Senha: ");
+            printf("       Senha: ");
 
             i = 0;
             while (1) {
@@ -1314,15 +1320,18 @@ void login() {
             if (carregarGerente(login, &gerente)) {
                 if (strcmp(gerente.senha, senha) == 0) {
                     system(CLEAR);
-                    printf("Bem-vindo, %s! Aguarde um momento...\n", gerente.nome);
+                    printf("\n ============= BEM VINDO(A), %s! =============\n\n", gerente.nome);
+                    printf("       Aguarde um momento...\n\n");
                     Sleep(4200);
                     animarBarco();
                     system("cls");
                     menuGerente();
                     return;
                 } else {
-                    printf("Senha incorreta!\n");
-                    Sleep(2200);
+                	setColor(12);
+                    printf("\n       Senha incorreta!\n");
+                    setColor(7);
+                    Sleep(1400);
                     system("cls");
                 }
             } else {
@@ -1331,7 +1340,8 @@ void login() {
                     if (strcmp(funcionarios[i].usuario, login) == 0 && 
                         strcmp(funcionarios[i].senha, senha) == 0) {
                         system(CLEAR);
-                        printf("Bem-vindo, %s! Aguarde um momento... \n", funcionarios[i].nome);
+                        printf("\n ============= BEM VINDO(A), %s! =============\n\n", funcionarios[i].nome);
+                        printf("\n       Aguarde um momento...\n\n");
                         Sleep(4200);
                         animarBarco();
                         system("cls");
@@ -1341,8 +1351,10 @@ void login() {
                 }
 
                 // Se o loop terminar sem encontrar o funcionário
-                printf("Usuário não encontrado ou senha incorreta!\n");
-                Sleep(2200);
+                setColor(12);
+                printf("\n       Usuário não encontrado ou senha incorreta!\n");
+                Sleep(1400);
+                setColor(7);
                 system("cls");
             }
         }
