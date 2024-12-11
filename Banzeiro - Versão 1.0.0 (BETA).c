@@ -341,7 +341,9 @@ void salvarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastro
         fwrite(funcionarios, sizeof(FuncionarioCadastro), num_funcionarios, fp);
         fclose(fp);
     } else {
+    	setColor(12);
         printf("\n       Erro ao salvar os dados dos funcionários.\n");
+        setColor(15);
     }
 }
 
@@ -371,7 +373,11 @@ int carregarTodosFuncionariosPersistente(const char *arquivo, FuncionarioCadastr
 // Função para cadastrar um novo funcionário
 void cadastrarFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios) {
     if (*num_funcionarios >= 100) {
-        printf("\n       Limite máximo de funcionários atingido!\n");
+        printf("\n       Limite ");
+        setColor(12);
+		printf("máximo");
+		setColor(15);
+		printf(" de funcionários atingido!\n");
         return;
     }
 
@@ -444,7 +450,10 @@ void listarFuncionarios(FuncionarioCadastro *funcionarios, int num_funcionarios)
             printf("       Telefone: %s\n", funcionarios[i].telefone);
             printf("       Email: %s\n", funcionarios[i].email);
             printf("       Conta Bancária: %s\n", funcionarios[i].conta_bancaria);
-            printf("       Usuário: %s\n", funcionarios[i].usuario);
+            printf("       Usuário: ");
+            setColor(9);
+			printf("%s\n", funcionarios[i].usuario);
+			setColor(15);
             printf("------------------------------------------------\n");
         }
     }
@@ -470,9 +479,9 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     }
 
     if (posicao == -1) {
-    	setColor(11);
+    	setColor(12);
         printf("\n       Funcionário não encontrado.\n");
-        setColor(7);
+        setColor(15);
         printf("\nPressione qualquer tecla para voltar ao menu principal.\n");
         getch();
         return;
@@ -482,7 +491,9 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     system("cls");
     printf("\n ============= ALTERAR FUNCIONÁRIO =============\n\n");
     printf("\n       Funcionário ");
+    setColor(11);
 	printf("%s", funcionarios[posicao].nome);
+	setColor(15);
 	printf(", foi encontrado!\n");
     printf("\n       Digite abaixo os novos dados do funcionário\n");
 
@@ -517,7 +528,11 @@ void alterarFuncionario(FuncionarioCadastro *funcionarios, int num_funcionarios)
     // Salva todos os funcionários após a alteração
     salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, num_funcionarios);
 
-    printf("\n       Dados do funcionário alterados com sucesso!\n");
+    printf("\n       Dados do funcionário alterados com ");
+    setColor(10);
+	printf("sucesso");
+	setColor(15);
+	printf("!\n");
     printf("\nPressione qualquer tecla para voltar ao menu principal.\n");
     getch();
 }
@@ -540,7 +555,9 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     }
 
     if (posicao == -1) {
+    	setColor(12);
         printf("\n       Funcionário não encontrado.\n");
+        setColor(15);
         printf("\nPressione qualquer tecla para voltar ao menu principal.\n");
         getch();
         return;
@@ -552,7 +569,7 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
     printf("\n       Tem certeza que deseja excluir o funcionário ");
     setColor(11);
 	printf("%s", funcionarios[posicao].nome);
-	setColor(7);
+	setColor(15);
 	printf("? (S/N): ");
     char confirmacao = getch();
 
@@ -571,7 +588,11 @@ void excluirFuncionario(FuncionarioCadastro *funcionarios, int *num_funcionarios
         // Salva todos os funcionários após a exclusão
         salvarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, *num_funcionarios);
 
-        printf("\n\n       Funcionário excluído com sucesso!\n");
+        printf("\n\n       Funcionário excluído com ");
+		setColor(10);
+		printf("sucesso");
+		setColor(15);
+		printf("!\n");
     } else {
         printf("\n\n       Exclusão cancelada!\n");
     }
@@ -669,7 +690,9 @@ struct cliente {
 void cadastrar_cliente(struct cliente **head) {
     struct cliente *novo_cl = (struct cliente *)malloc(sizeof(struct cliente));
     if (!novo_cl) {
+    	setColor(12);
         printf("\n       Erro ao alocar memória!\n");
+        setColor(15);
         return;
     }
     novo_cl->id = prox_id++;
@@ -686,7 +709,11 @@ void cadastrar_cliente(struct cliente **head) {
     do {
         ler_data_formatada(novo_cl->data_nasc);
         if (!validar_data(novo_cl->data_nasc)) {
-            printf("\n       Data inválida! Tente novamente.\n");
+            printf("\n       ");
+            setColor(12);
+			printf("Data inválida");
+			setColor(15);
+			printf("! Tente novamente.\n");
         }
     } while (!validar_data(novo_cl->data_nasc));
 
@@ -697,7 +724,11 @@ void cadastrar_cliente(struct cliente **head) {
     novo_cl->proximo_cl = *head;
     *head = novo_cl;
 
-    printf("\n       Cliente cadastrado com sucesso!\n");
+    printf("\n       Cliente cadastrado com ");
+    setColor(10);
+	printf("sucesso");
+	setColor(15);
+	printf("!\n");
     getch();
 }
 
@@ -713,7 +744,10 @@ void buscar_cliente_por_cpf(struct cliente *head, const char *cpf) {
 
         if (strcmp(cpf_atual_limpo, cpf_limpo) == 0) {
             printf("\n       Cliente encontrado:\n");
-            printf("       ID: %d\n", atual->id);
+            printf("       ID: ");
+            setColor(9);
+			printf("%d\n", atual->id);
+			setColor(15);
             printf("       Nome: %s\n", atual->nome);
             printf("       CPF: %s\n", atual->cpf);
             printf("       Data de Nascimento: %s\n", atual->data_nasc);
@@ -738,7 +772,10 @@ struct cliente* buscarCliente(struct cliente *head, const char *cpf, int exibir_
         if (strcmp(cpf_atual_limpo, cpf_limpo) == 0) {
             if (exibir_informacoes) {
                 printf("\n       Cliente encontrado:\n");
-                printf("       ID: %d\n", atual->id);
+                printf("       ID: ");
+            	setColor(9);
+				printf("%d\n", atual->id);
+				setColor(15);
                 printf("       Nome: %s\n", atual->nome);
                 printf("       CPF: %s\n", atual->cpf);
                 printf("       Data de Nascimento: %s\n", atual->data_nasc);
@@ -836,7 +873,7 @@ void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, in
                 setColor(10); // Verde para disponíveis
                 printf(" %-4s", assentos[i][j]);
             }
-            setColor(7); // Reset para texto padrão
+            setColor(15); // Reset para texto padrão
         }
         printf("\n");
     }
@@ -856,8 +893,14 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
         printf("\n ============= INFORMAÇÕES DO BARCO =============\n\n");
         printf("       Rota: %s -> %s\n", rota.origem, rota.destino);
         printf("       Data: %s\n", rota.data);
-        printf("       Horário: %s\n", rota.horario);
-        printf("       Preço: %s\n", rota.preco);
+        printf("       Horário: ");
+        setColor(9);
+		printf("%s\n", rota.horario);
+		setColor(15);
+        printf("       Preço: ");
+		setColor(10);
+		printf("%s\n", rota.preco);
+		setColor(15);
         printf("       Capacidade: %d assentos\n", rota.capacidade);
         printf("\n");
 
@@ -865,9 +908,9 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
 
         printf("\n       Use as setas para navegar;\n");
 		printf("       Pressione 'Enter' para confirmar o assento;\n");
-        printf("       Pressione 'f' para finalizar a seleção;\n");
-		printf("       Pressione 'v' para voltar ao menu;\n");
-		printf("       Pressione 'q' para sair.\n");
+        printf("       Pressione 'F' para finalizar a seleção;\n");
+		printf("       Pressione 'V' para voltar ao menu;\n");
+		printf("       Pressione 'Q' para sair.\n");
 
         int tecla = _getch();
 
@@ -889,13 +932,25 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
             }
         } else if (tecla == 13) { // Enter
             if (strcmp(assentos[posLinha][posColuna], "X") == 0) {
-                printf("\n       Assento já ocupado! Tente novamente.\n");
+                printf("\n       ");
+                setColor(12);
+				printf("Assento já ocupado");
+				setColor(15);
+				printf("! Tente novamente.\n");
                 _getch();
             } else {
                 strcpy(assentos[posLinha][posColuna], "X");
                 snprintf(assentosEscolhidos[*totalAssentosEscolhidos], 5, "%c-%d", LETRAS[posLinha], posColuna + 1);
                 (*totalAssentosEscolhidos)++;
-                printf("\n       Assento %c-%d selecionado com sucesso!\n", LETRAS[posLinha], posColuna + 1);
+                printf("\n       Assento ");
+                setColor(14);
+				printf("%c-%d", LETRAS[posLinha], posColuna + 1);
+				setColor(15);
+				printf(" selecionado com ");
+				setColor(10);
+				printf("sucesso");
+				setColor(15);
+				printf("!\n");
                 _getch();
             }
         } else if (tecla == 'f' || tecla == 'F') { // Finalizar seleção
@@ -946,9 +1001,18 @@ void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char 
     printf("       CPF: %s\n", aux->cpf);
     printf("       Origem: %s\n", aux->origem);
     printf("       Destino: %s\n", aux->destino);
-    printf("       Data: %s\n", aux->data);
-    printf("       Horário: %s\n", aux->horario);
-    printf("       Preço Total: R$ %.2f\n", (float)aux->preco);
+    printf("       Data: ");
+    setColor(9);
+	printf("%s\n", aux->data);
+	setColor(15);
+    printf("       Horário: ");
+    setColor(9);
+	printf("%s\n", aux->horario);
+	setColor(15);
+    printf("       Preço Total: ");
+    setColor(10);
+	printf("R$ %.2f\n", (float)aux->preco);
+	setColor(15);
     printf("\n ==========================================\n");
 }
 
@@ -966,9 +1030,18 @@ void ListagemNota() {
         printf("       Nome do Cliente: %s\n", buscar->nome);
         printf("       Origem: %s\n", buscar->origem);
         printf("       Destino: %s\n", buscar->destino);
-        printf("       Data: %s\n", buscar->data);
-        printf("       Horário: %s\n", buscar->horario);
-        printf("       Preço: R$%i\n", buscar->preco);
+        printf("       Data: ");
+	    setColor(9);
+		printf("%s\n", buscar->data);
+		setColor(15);
+    	printf("       Horário: ");
+	    setColor(9);
+		printf("%s\n", buscar->horario);
+		setColor(15);
+    	printf("       Preço Total: ");
+    	setColor(10);
+		printf("R$ %.2f\n", buscar->preco);
+		setColor(15);
         printf("\n ==========================================\n");
 
         buscar = buscar->prox_Nota;
@@ -998,7 +1071,7 @@ int mostrarMenu(const char *titulo, const char **opcoes, int numOpcoes) {
         for (i = 0; i < numOpcoes; i++) {
             setColor(posicao == i ? 14 : 7); // Amarelo para a opção selecionada
             printf("    -> %s\n", opcoes[i]);
-            setColor(7); // Reset para a cor padrão
+            setColor(15); // Reset para a cor padrão
         }
 
         tecla = _getch();
@@ -1044,20 +1117,31 @@ void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_P
         system(CLEAR);
         printf("\n ============= FINALIZAR COMPRA =============\n\n");
         printf("       Rota: %s -> %s\n", rota.origem, rota.destino);
-        printf("       Data: %s\n", rota.data);
-        printf("       Horário: %s\n", rota.horario);
+        printf("       Data: ");
+    	setColor(9);
+		printf("%s\n", rota.data);
+		setColor(15);
+    	printf("       Horário: ");
+    	setColor(9);
+		printf("%s\n", rota.horario);
+		setColor(15);
         printf("       Assentos Selecionados:\n\n");
         for (i = 0; i < totalAssentos; i++) {
+        	setColor(13);
             printf("       - %s\n", assentosEscolhidos[i]);
         }
-        printf("\n       Preço total: R$ %.2f\n", preco_total);
+        setColor(15);
+        printf("\n       Preço Total: ");
+    	setColor(10);
+		printf("R$ %.2f\n", preco_total);
+		setColor(15);
         printf("\n ==========================================\n\n");
         printf("       Confirma compra? (S/N): ");
         scanf(" %c", &opcao);
 
         if (opcao == 'S' || opcao == 's') {
             geracaoNotaFiscal(rota, preco_total, nome, cpf);
-            printf("n       Compra confirmada! Pressione qualquer tecla para continuar.\n");
+            printf("\n       Compra confirmada! Pressione qualquer tecla para continuar.\n");
             _getch();
             break; // Sai do loop após a confirmação da compra
         } else {
@@ -1077,8 +1161,10 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
     printf("       Horário: %s\n", rota.horario);
     printf("\n       Assentos Selecionados:\n\n");
     for (i = 0; i < totalAssentos; i++) {
+    	setColor(13);
         printf("       - %s\n", assentosEscolhidos[i]);
     }
+    setColor(15);
     printf("\n ===============================================\n\n");
 
     printf("       Cliente possui cadastro? (S/N): ");
@@ -1243,7 +1329,7 @@ void menuFuncionario(){
             case 3:
             	system("cls");
             	printf("\n ============= MENU FUNCIONÁRIO =============\n\n");
-                printf("       Saindo do menu do gerente...\n");
+                printf("       Saindo do menu do funcionário...\n");
                 Sleep(3200);
                 login();
                 break;
@@ -1277,17 +1363,17 @@ void login() {
             setColor(14);
             printf("    -> Entrar\n");
         } else {
-            setColor(7);
+            setColor(15);
             printf("       Entrar\n");
         }
         if (posicao == 1) {
-            setColor(14);
+            setColor(12);
             printf("    -> Sair\n");
         } else {
-            setColor(7);
+            setColor(15);
             printf("       Sair\n");
         }
-        setColor(7);
+        setColor(15);
 
         tecla = _getch();
         if (tecla == 224) {
@@ -1344,7 +1430,7 @@ void login() {
                     printf("\n ============= BEM VINDO(A), ");
                     setColor(11);
 					printf("%s", gerente.nome);
-					setColor(7);
+					setColor(15);
 					printf("! =============\n\n");
                     printf("       Aguarde um momento...\n\n");
                     Sleep(4200);
@@ -1355,7 +1441,7 @@ void login() {
                 } else {
                 	setColor(12);
                     printf("\n       Senha incorreta!\n");
-                    setColor(7);
+                    setColor(15);
                     Sleep(1400);
                     system("cls");
                 }
@@ -1368,7 +1454,7 @@ void login() {
                         printf("\n ============= BEM VINDO(A), ");
                         setColor(11);
 						printf("%s", funcionarios[i].nome);
-						setColor(7);
+						setColor(15);
 						printf("! =============\n\n");
                         printf("       Aguarde um momento...\n\n");
                         Sleep(4200);
@@ -1383,7 +1469,7 @@ void login() {
                 setColor(12);
                 printf("\n       Usuário não encontrado ou senha incorreta!\n");
                 Sleep(1400);
-                setColor(7);
+                setColor(15);
                 system("cls");
             }
         }
