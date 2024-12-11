@@ -949,7 +949,7 @@ void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char 
     printf("       Data: %s\n", aux->data);
     printf("       Horário: %s\n", aux->horario);
     printf("       Preço Total: R$ %.2f\n", (float)aux->preco);
-    printf("==========================\n");
+    printf("\n ==========================================\n");
 }
 
 // Listagem de Nota fiscal, onde ele vai listar todas as notas, caso nem tenha, ele informa que não existe registro no programa
@@ -969,7 +969,7 @@ void ListagemNota() {
         printf("       Data: %s\n", buscar->data);
         printf("       Horário: %s\n", buscar->horario);
         printf("       Preço: R$%i\n", buscar->preco);
-        printf("==========================\n");
+        printf("\n ==========================================\n");
 
         buscar = buscar->prox_Nota;
         i++;
@@ -1046,22 +1046,22 @@ void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_P
         printf("       Rota: %s -> %s\n", rota.origem, rota.destino);
         printf("       Data: %s\n", rota.data);
         printf("       Horário: %s\n", rota.horario);
-        printf("       Assentos Selecionados:\n");
+        printf("       Assentos Selecionados:\n\n");
         for (i = 0; i < totalAssentos; i++) {
-            printf("- %s\n", assentosEscolhidos[i]);
+            printf("       - %s\n", assentosEscolhidos[i]);
         }
-        printf("       Preço total: R$ %.2f\n", preco_total);
-        printf("============================\n");
+        printf("\n       Preço total: R$ %.2f\n", preco_total);
+        printf("\n ==========================================\n\n");
         printf("       Confirma compra? (S/N): ");
         scanf(" %c", &opcao);
 
         if (opcao == 'S' || opcao == 's') {
             geracaoNotaFiscal(rota, preco_total, nome, cpf);
-            printf("       Compra confirmada! Pressione qualquer tecla para continuar.\n");
+            printf("n       Compra confirmada! Pressione qualquer tecla para continuar.\n");
             _getch();
             break; // Sai do loop após a confirmação da compra
         } else {
-            printf("       Compra cancelada! Voltando ao Menu Principal...\n");
+            printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
             _getch();
         }
     } 
@@ -1079,7 +1079,7 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
     for (i = 0; i < totalAssentos; i++) {
         printf("       - %s\n", assentosEscolhidos[i]);
     }
-    printf("\n ===============================\n\n");
+    printf("\n ===============================================\n\n");
 
     printf("       Cliente possui cadastro? (S/N): ");
     scanf(" %c", &resposta);
@@ -1088,24 +1088,24 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
         char cpf_busca[15]; // Variável cpf_busca declarada dentro do bloco condicional
         system(CLEAR);
         printf("\n ============= BUSCAR CLIENTE POR CPF =============\n\n");
-        printf("       Digite o CPF do cliente");
+        printf("       Digite abaixo o CPF do cliente");
         printf("\n");
         ler_cpf_formatado(cpf_busca);
         
         struct cliente *cliente_encontrado = buscarCliente_por_cpf_sem_exibir(*head_cliente, cpf_busca);
         
         if (cliente_encontrado != NULL) {
-            printf("\n       Cliente Identificado: %s!!! Prosseguir com a compra? (S/N) ", cliente_encontrado->nome);
+            printf("\n       Cliente Identificado: %s. Prosseguir com a compra? (S/N) ", cliente_encontrado->nome);
             scanf(" %c", &resposta);
             if (resposta == 'S' || resposta == 's') {
                 finalizarCompra(totalAssentos, rota, assentosEscolhidos, cliente_encontrado->nome, cliente_encontrado->cpf);
             } else {
-                printf("       Compra cancelada! Voltando ao Menu Principal...\n");
+                printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
                 return 0; // Retorno 0 para indicar que a função terminou
             }
         } else {
-            printf("       Cliente não encontrado. Pressione qualquer tecla para continuar...\n");
+            printf("\n       Cliente não encontrado.\n\nPressione qualquer tecla para continuar...\n");
             _getch(); 
         }
     } else if (resposta == 'N' || resposta == 'n') {
@@ -1120,11 +1120,12 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
             if (resposta == 'S' || resposta == 's') {
                 finalizarCompra(totalAssentos, rota, assentosEscolhidos, (*head_cliente)->nome, (*head_cliente)->cpf);
             } else {
-                printf("       Compra cancelada! Voltando ao Menu Principal...\n");
+                printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
                 return 0; // Retorno 0 para indicar que a função terminou
             }
         } else {
+        	system("cls");
             struct cliente cliente_temp; // Variável cliente_temp declarada dentro do bloco condicional
             printf("\n ============= INFORMAÇÕES DO CLIENTE =============\n\n");
             printf("       Nome: ");
@@ -1139,7 +1140,7 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
             if (resposta == 'S' || resposta == 's') {
                 finalizarCompra(totalAssentos, rota, assentosEscolhidos, cliente_temp.nome, cliente_temp.cpf);
             } else {
-                printf("       Compra cancelada! Voltando ao Menu Principal...\n");
+                printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
                 _getch();
                 return 0; // Retorno 0 para indicar que a função terminou
             }
@@ -1398,10 +1399,10 @@ int main() {
 
     // Carrega todos os funcionários do arquivo "funcionarios.dat"
     if (!carregarTodosFuncionariosPersistente("funcionarios.dat", funcionarios, &num_funcionarios)) {
-        printf("       Nenhum funcionário encontrado. Inicializando com lista vazia.\n");
+        printf("\n       Nenhum funcionário encontrado. Inicializando com lista vazia.\n");
     }
 
-    printf("       Número de funcionários carregados: %d\n", num_funcionarios);
+    printf("\n       Número de funcionários carregados: %d\n", num_funcionarios);
 
     login();
 
