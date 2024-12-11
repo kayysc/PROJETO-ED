@@ -660,8 +660,46 @@ void menuGerente() {
                 break;
             case 3:
                 system(CLEAR);
-                printf("       Opção 3 escolhida (Leis do Consumidor).\n");
-                printf("\nPressione qualquer tecla para voltar ao menu.\n");
+                printf("\n ============= LEIS DO CONSUMIDOR =============\n\n");
+                setColor(15);
+                
+                
+                printf("\n        Legislação Aplicável aos Idosos\n\n"
+ 					   "        1. Lei nº ");
+				setColor(14);
+				printf("10.741/2003");
+				setColor(15);
+				printf(" (Estatuto do Idoso)\n\n"
+                       "        - Estabelece direitos para pessoas com 60 anos ou mais, com foco na garantia de\n"
+                       "        acesso prioritário e tratamento adequado nos serviços públicos e privados, incluindo\n"
+                       "        transporte.\n\n"
+                	   "        2. Lei nº ");
+				setColor(14);	   
+				printf("10.048/2000");
+				setColor(15);	   
+				printf(" (Lei da Prioridade)\n\n"
+                       "        - Garante a prioridade para idosos, gestantes, lactantes, pessoas com deficiência e\n"
+                       "        pessoas acompanhadas por crianças de colo no uso de serviços públicos e\n"
+                       "        privados, incluindo o transporte fluvial.\n\n");
+                
+                printf("\n\n        Legislação Aplicável aos Estudantes\n\n"
+ 					   "        1. Lei nº ");
+				setColor(14);
+				printf("12.852/2013");
+				setColor(15);
+				printf(" (Estatuto da Juventude)\n\n"
+                       "        - Garante direitos aos jovens de 15 a 29 anos, incluindo meia-passagem ou\n"
+                       "        descontos no transporte coletivo, quando aplicável, e acesso preferencial a serviços\n"
+                       "        de educação, cultura, saúde e transporte.\n\n"
+                       "        2. Lei nº ");
+				setColor(14);	   
+				printf("12.933/2013");
+				setColor(15);	   
+				printf(" (Lei da Meia-Entrada)\n\n"
+                       "        - Estende o direito à meia-entrada para transporte público e eventos culturais,\n"
+                       "        mediante a apresentação da Carteira de Identificação Estudantil (CIE) emitida por\n"
+                       "        entidades estudantis reconhecidas.\n");
+                printf("\n\nPressione qualquer tecla para voltar ao menu.\n");
                 getch();
                 break;
             case 4:
@@ -1040,7 +1078,7 @@ void ListagemNota() {
 		setColor(15);
     	printf("       Preço Total: ");
     	setColor(10);
-		printf("R$ %.2f\n", buscar->preco);
+		printf("R$ %i\n", buscar->preco);
 		setColor(15);
         printf("\n ==========================================\n");
 
@@ -1306,6 +1344,7 @@ void menuFuncionario(){
         "Listar notas fiscais",
 		"Área do cliente",
 		"Rotas",
+		"Leis do consumidor",
         "Sair"
     };
     int num_opcoes_menu_principal = sizeof(opcoes_menu_principal) / sizeof(opcoes_menu_principal[0]);
@@ -1327,6 +1366,50 @@ void menuFuncionario(){
                 listarRotas(&head_cliente);
                 break;
             case 3:
+                system(CLEAR);
+                printf("\n ============= LEIS DO CONSUMIDOR =============\n\n");
+                setColor(15);
+                
+                
+                printf("\n        Legislação Aplicável aos Idosos\n\n"
+ 					   "        1. Lei nº ");
+				setColor(14);
+				printf("10.741/2003");
+				setColor(15);
+				printf(" (Estatuto do Idoso)\n\n"
+                       "        - Estabelece direitos para pessoas com 60 anos ou mais, com foco na garantia de\n"
+                       "        acesso prioritário e tratamento adequado nos serviços públicos e privados, incluindo\n"
+                       "        transporte.\n\n"
+                	   "        2. Lei nº ");
+				setColor(14);	   
+				printf("10.048/2000");
+				setColor(15);	   
+				printf(" (Lei da Prioridade)\n\n"
+                       "        - Garante a prioridade para idosos, gestantes, lactantes, pessoas com deficiência e\n"
+                       "        pessoas acompanhadas por crianças de colo no uso de serviços públicos e\n"
+                       "        privados, incluindo o transporte fluvial.\n\n");
+                
+                printf("\n\n        Legislação Aplicável aos Estudantes\n\n"
+ 					   "        1. Lei nº ");
+				setColor(14);
+				printf("12.852/2013");
+				setColor(15);
+				printf(" (Estatuto da Juventude)\n\n"
+                       "        - Garante direitos aos jovens de 15 a 29 anos, incluindo meia-passagem ou\n"
+                       "        descontos no transporte coletivo, quando aplicável, e acesso preferencial a serviços\n"
+                       "        de educação, cultura, saúde e transporte.\n\n"
+                       "        2. Lei nº ");
+				setColor(14);	   
+				printf("12.933/2013");
+				setColor(15);	   
+				printf(" (Lei da Meia-Entrada)\n\n"
+                       "        - Estende o direito à meia-entrada para transporte público e eventos culturais,\n"
+                       "        mediante a apresentação da Carteira de Identificação Estudantil (CIE) emitida por\n"
+                       "        entidades estudantis reconhecidas.\n");
+                printf("\n\nPressione qualquer tecla para voltar ao menu.\n");
+                getch();
+                break;
+            case 4:
             	system("cls");
             	printf("\n ============= MENU FUNCIONÁRIO =============\n\n");
                 printf("       Saindo do menu do funcionário...\n");
