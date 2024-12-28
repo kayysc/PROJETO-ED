@@ -18,6 +18,7 @@
 #define LETRAS "ABCDEFGH"
 #define MAX_DESTINOS 4
 #define MAX_PASSAGENS 3
+#define MAX_NOTAS 1
 
 int i, j;
 int prox_id = 1;
@@ -1301,18 +1302,163 @@ void listarRotas(struct cliente **head_cliente) {
     }
 }
 
+void cancelarCompra() {
+    char opcao;
+    char cpf_formatado[15], cpf_limpo[12];
+    int id, encontrado = 0;
+
+    do {
+        system(CLEAR);
+        printf("\n ============= CANCELAMENTO DE COMPRA =============\n");
+        printf("       [1] Cancelar por CPF\n");
+        printf("       [2] Cancelar por ID da Nota Fiscal\n");
+        printf("       [0] Voltar ao menu\n");
+        printf("\n       Escolha uma opção: ");
+        opcao = getchar();
+        getchar(); // Captura o '\n' adicional após o getchar()
+
+        switch (opcao) {
+            case '1': // Cancelar por CPF
+                system(CLEAR);
+                printf("\n       Digite o CPF do cliente:\n");
+                ler_cpf_formatado(cpf_formatado);
+                remover_formatacao_cpf(cpf_formatado, cpf_limpo);
+
+                struct Nota *atual = notasfiscais, *anterior = NULL;
+                encontrado = 0;
+
+                while (atual != NULL) {
+                    char cpf_atual_limpo[12];
+                    remover_formatacao_cpf(atual->cpf, cpf_atual_limpo);
+
+                    if (strcmp(cpf_limpo, cpf_atual_limpo) == 0) {
+                        encontrado = 1;
+
+                        // Exibe as informações da nota fiscal
+                        printf("\n       Nota Fiscal Encontrada:\n");
+                        printf("       ID: %d\n", atual->notaFiscal);
+                        printf("       Nome: %s\n", atual->nome);
+                        printf("       CPF: %s\n", atual->cpf);
+                        printf("       Origem: %s\n", atual->origem);
+                        printf("       Destino: %s\n", atual->destino);
+                        printf("       Data: %s\n", atual->data);
+                        printf("       Horário: %s\n", atual->horario);
+                        printf("       Valor: R$ %.2f\n", (float)atual->preco);
+
+                        printf("\n       Deseja cancelar esta compra? (S/N): ");
+                        char confirmacao = getchar();
+                        getchar(); // Captura o '\n' adicional
+                        if (confirmacao == 's' || confirmacao == 'S') {
+                            if (anterior == NULL) {
+                                notasfiscais = atual->prox_Nota;
+                            } else {
+                                anterior->prox_Nota = atual->prox_Nota;
+                            }
+                            free(atual);
+                            printf("\n       Compra cancelada com sucesso!\n");
+                            printf("       Pressione qualquer tecla para voltar ao menu...");
+                            getchar();
+                            return;
+                        } else {
+                            printf("\n       Cancelamento abortado.\n");
+                            printf("       Pressione qualquer tecla para voltar ao menu...");
+                            getchar();
+                            return;
+                        }
+                    }
+
+                    anterior = atual;
+                    atual = atual->prox_Nota;
+                }
+
+                if (!encontrado) {
+                    printf("\n       Nenhuma nota fiscal encontrada para o CPF informado.\n");
+                    printf("       Pressione qualquer tecla para voltar ao menu...");
+                    getchar();
+                }
+                break;
+
+            case '2': // Cancelar por ID
+                system(CLEAR);
+                printf("\n       Digite o ID da Nota Fiscal: ");
+                scanf("%d", &id);
+                getchar(); // Captura o '\n' adicional
+
+                struct Nota *atual_id = notasfiscais, *anterior_id = NULL;
+                encontrado = 0;
+
+                while (atual_id != NULL) {
+                    if (atual_id->notaFiscal == id) {
+                        encontrado = 1;
+
+                        // Exibe as informações da nota fiscal
+                        printf("\n       Nota Fiscal Encontrada:\n");
+                        printf("       ID: %d\n", atual_id->notaFiscal);
+                        printf("       Nome: %s\n", atual_id->nome);
+                        printf("       CPF: %s\n", atual_id->cpf);
+                        printf("       Origem: %s\n", atual_id->origem);
+                        printf("       Destino: %s\n", atual_id->destino);
+                        printf("       Data: %s\n", atual_id->data);
+                        printf("       Horário: %s\n", atual_id->horario);
+                        printf("       Valor: R$ %.2f\n", (float)atual_id->preco);
+
+                        printf("\n       Deseja cancelar esta compra? (S/N): ");
+                        char confirmacao = getchar();
+                        getchar(); // Captura o '\n' adicional
+                        if (confirmacao == 's' || confirmacao == 'S') {
+                            if (anterior_id == NULL) {
+                                notasfiscais = atual_id->prox_Nota;
+                            } else {
+                                anterior_id->prox_Nota = atual_id->prox_Nota;
+                            }
+                            free(atual_id);
+                            printf("\n       Compra cancelada com sucesso!\n");
+                            printf("       Pressione qualquer tecla para voltar ao menu...");
+                            getchar();
+                            return;
+                        } else {
+                            printf("\n       Cancelamento abortado.\n");
+                            printf("       Pressione qualquer tecla para voltar ao menu...");
+                            getchar();
+                            return;
+                        }
+                    }
+
+                    anterior_id = atual_id;
+                    atual_id = atual_id->prox_Nota;
+                }
+
+                if (!encontrado) {
+                    printf("\n       Nenhuma nota fiscal encontrada para o ID informado.\n");
+                    printf("       Pressione qualquer tecla para voltar ao menu...");
+                    getchar();
+                }
+                break;
+
+            case '0': // Voltar ao menu
+                return;
+
+            default:
+                printf("\n       Opção inválida! Pressione qualquer tecla para tentar novamente...");
+                getchar();
+        }
+    } while (opcao != '0');
+}
+
+
 // Menu da Área do Cliente
 void menuCliente(struct cliente **head_cliente) { // Recebe o endereço do ponteiro head_cliente
     const char *opcoes[] = {
         "Cadastrar cliente",
         "Buscar cliente por CPF",
+        "Cancelamento de Compra",
         "Voltar"
     };
     int escolha;
     char cpf_busca[15];
 
     do {
-        escolha = mostrarMenu("ÁREA DO CLIENTE", opcoes, 3);
+        escolha = mostrarMenu("ÁREA DO CLIENTE", opcoes, 4);
         switch (escolha) {
             case 0:
                 system(CLEAR);
@@ -1331,8 +1477,12 @@ void menuCliente(struct cliente **head_cliente) { // Recebe o endereço do ponte
                 break;
             }
             case 2:
-                printf("       Voltando ao menu anterior...\n");
-                return;
+               system(CLEAR);
+               cancelarCompra();
+               break;
+            case 3:
+            	printf("Voltando ao menu anterior...");
+            	return;
         }
     } while (1);
 }
