@@ -1315,7 +1315,7 @@ void cancelarCompra() {
         printf("       [0] Voltar ao menu\n");
         printf("\n       Escolha uma opção: ");
         opcao = getchar();
-        getchar(); // Captura o '\n' adicional após o getchar()
+        getchar(); 
 
         switch (opcao) {
             case '1': // Cancelar por CPF
@@ -1347,7 +1347,7 @@ void cancelarCompra() {
 
                         printf("\n       Deseja cancelar esta compra? (S/N): ");
                         char confirmacao = getchar();
-                        getchar(); // Captura o '\n' adicional
+                        getchar(); 
                         if (confirmacao == 's' || confirmacao == 'S') {
                             if (anterior == NULL) {
                                 notasfiscais = atual->prox_Nota;
@@ -1382,7 +1382,7 @@ void cancelarCompra() {
                 system(CLEAR);
                 printf("\n       Digite o ID da Nota Fiscal: ");
                 scanf("%d", &id);
-                getchar(); // Captura o '\n' adicional
+                getchar(); 
 
                 struct Nota *atual_id = notasfiscais, *anterior_id = NULL;
                 encontrado = 0;
@@ -1404,7 +1404,7 @@ void cancelarCompra() {
 
                         printf("\n       Deseja cancelar esta compra? (S/N): ");
                         char confirmacao = getchar();
-                        getchar(); // Captura o '\n' adicional
+                        getchar(); 
                         if (confirmacao == 's' || confirmacao == 'S') {
                             if (anterior_id == NULL) {
                                 notasfiscais = atual_id->prox_Nota;
