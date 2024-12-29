@@ -1277,20 +1277,61 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
     return 0; // Finaliza a função
 }
 
+// Função para salvar o estado dos assentos em um arquivo
+void salvarAssentos(char ***assentos, int linhas, int colunas, const char *nomeArquivo) {
+    FILE *fp = fopen(nomeArquivo, "w");
+    if (fp == NULL) {
+        printf("Erro ao abrir o arquivo para salvar os assentos.\n");
+        return;
+    }
+
+    for (i = 0; i < linhas; i++) {
+        for (j = 0; j < colunas; j++) {
+            fprintf(fp, "%s ", assentos[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+
+    fclose(fp);
+}
+
+// Função para carregar o estado dos assentos de um arquivo
+void carregarAssentos(char ***assentos, int linhas, int colunas, const char *nomeArquivo) {
+    FILE *fp = fopen(nomeArquivo, "r");
+    if (fp == NULL) {
+        // Se o arquivo não existir, inicializa os assentos como disponíveis
+        inicializarAssentos(assentos, linhas, colunas);
+        return;
+    }
+
+    for (i = 0; i < linhas; i++) {
+        for (j = 0; j < colunas; j++) {
+            fscanf(fp, "%s", assentos[i][j]);
+        }
+    }
+
+    fclose(fp);
+}
+
 void listarRotas(struct cliente **head_cliente) {
-    const char *opcoes[MAX_DESTINOS + 1]; 
+    const char *opcoes[MAX_DESTINOS + 1];
     for (i = 0; i < MAX_DESTINOS; i++) {
         char temp[50];
         sprintf(temp, "%d. %s -> %s - %s - %s", i + 1, rotas[i].origem, rotas[i].destino, rotas[i].data, rotas[i].horario);
-        opcoes[i] = strdup(temp); 
+        opcoes[i] = strdup(temp);
     }
     opcoes[MAX_DESTINOS] = "Voltar"; 
 
     int escolha = mostrarMenu("MENU DE ROTAS", opcoes, MAX_DESTINOS + 1);
-    
     if (escolha >= 0 && escolha < MAX_DESTINOS) {
         Rota rotaSelecionada = rotas[escolha];
         char ***assentos = criarAssentos(rotaSelecionada.linhas, rotaSelecionada.colunas);
+
+        // Carrega o estado dos assentos da rota
+        char nomeArquivoAssentos[50];
+        sprintf(nomeArquivoAssentos, "assentos_rota_%d.txt", escolha); // Nome do arquivo baseado no índice da rota
+        carregarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas, nomeArquivoAssentos);
+
         char assentosEscolhidos[MAX_PASSAGENS][5];
         int totalAssentosEscolhidos = 0;
 
@@ -1298,6 +1339,10 @@ void listarRotas(struct cliente **head_cliente) {
         if (resultado == 1 && totalAssentosEscolhidos > 0) {
             detalhesDaCompra(assentosEscolhidos, totalAssentosEscolhidos, rotaSelecionada, assentos, head_cliente);
         } 
+
+        // Salva o estado dos assentos da rota após a compra
+        salvarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas, nomeArquivoAssentos);
+
         liberarAssentos(assentos, rotaSelecionada.linhas, rotaSelecionada.colunas);
     }
 }
@@ -1708,7 +1753,6 @@ void login() {
         }
     } while (opcao != 2);
 }
-
 
 int main() {
     setlocale(LC_ALL, "Portuguese");
