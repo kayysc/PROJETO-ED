@@ -72,10 +72,10 @@ void mostrarAssentos(char ***assentos, int linhas, int colunas, int posLinha, in
                 setColor(14); // Amarelo para o assento selecionado
                 printf(" %-4s", assentos[i][j]);
             } else {
-                setColor(10); // Verde para disponíveis
+                setColor(10); // Verde para disponÃ­veis
                 printf(" %-4s", assentos[i][j]);
             }
-            setColor(15); // Reset para texto padrão
+            setColor(15); // Reset para texto padrÃ£o
         }
         printf("\n");
     }
@@ -101,7 +101,7 @@ void salvarAssentos(char ***assentos, int linhas, int colunas, const char *nomeA
 void carregarAssentos(char ***assentos, int linhas, int colunas, const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
     if (fp == NULL) {
-        // Se o arquivo n�o existir, inicializa os assentos como disponiveis
+        // Se o arquivo não existir, inicializa os assentos como disponiveis
         inicializarAssentos(assentos, linhas, colunas);
         return;
     }
@@ -120,7 +120,7 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
     while (*totalAssentosEscolhidos < MAX_PASSAGENS) {
         system(CLEAR);
 
-        // Exibindo as informações do barco
+        // Exibindo as informaÃ§Ãµes do barco
 
         printf("\n ============= INFORMAÇÕES DO BARCO =============\n\n");
         printf("       Rota: %s -> %s\n", rota.origem, rota.destino);
@@ -185,7 +185,7 @@ int escolherAssento(char ***assentos, int linhas, int colunas, char assentosEsco
                 printf("!\n");
                 _getch();
             }
-        } else if (tecla == 'f' || tecla == 'F') { // Finalizar seleção
+        } else if (tecla == 'f' || tecla == 'F') { // Finalizar seleÃ§Ã£o
             break;
         } else if (tecla == 'v' || tecla == 'V') { // Voltar
             return -1;
