@@ -36,10 +36,10 @@ int main(){
     salvarGerente("admin",&gerente);
 
     if(!carregarTodosFuncionariosPersistente("funcionario.dat",funcionarios,&num_funcionarios)) {
-        printf ("\n         Nenhum funcionario encontrado. Inicializando com lista vazia.\n");
+        printf ("\n         Nenhum funcion√°rio encontrado. Inicializando com lista vazia.\n");
     }
 
-    printf("\n Nu∫mero de funciona°rio carregados: %d\n",num_funcionarios);
+    printf("\n N√∫mero de funcion√°rio carregados: %d\n",num_funcionarios);
 
     login();
 
