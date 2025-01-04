@@ -1,12 +1,12 @@
 #include "auxiliar.h"
 
-//Vari·veis globais
+//Vari√°veis globais
 int i,j;
 
-// DefiniÁ„o da vari·vel notasfiscais
+// Defini√ß√£o da vari√°vel notasfiscais
 struct Nota *notasfiscais = NULL;
 
-// FunÁıes de nota fiscal
+// Fun√ß√µes de nota fiscal
 void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char *cpf) {
     system("cls");
     struct Nota *aux = (struct Nota *)malloc(sizeof(struct Nota));
@@ -22,7 +22,7 @@ void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char 
 
     aux->prox_Nota = notasfiscais;
     notasfiscais = aux;
-    // Exibe todas as informaÁıes da nota fiscal
+    // Exibe todas as informa√ß√µes da nota fiscal
     printf("\n ============= NOTAS FISCAIS =============\n\n");
     printf("       Nota Fiscal ID: %d\n", aux->notaFiscal);
     printf("       Nome: %s\n", aux->nome);
@@ -33,11 +33,11 @@ void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char 
     setColor(9);
     printf("%s\n", aux->data);
     setColor(15);
-    printf("       Hor·rio: ");
+    printf("       Hor√°rio: ");
     setColor(9);
     printf("%s\n", aux->horario);
     setColor(15);
-    printf("       PreÁo Total: ");
+    printf("       Pre√ßo Total: ");
     setColor(10);
     printf("R$ %.2f\n", (float)aux->preco);
     setColor(15);
@@ -60,11 +60,11 @@ void ListagemNota() {
         setColor(9);
         printf("%s\n", buscar->data);
         setColor(15);
-        printf("       Hor·rio: ");
+        printf("       Hor√°rio: ");
         setColor(9);
         printf("%s\n", buscar->horario);
         setColor(15);
-        printf("       PreÁo Total: ");
+        printf("       Pre√ßo Total: ");
         setColor(10);
         printf("R$ %i\n", buscar->preco);
         setColor(15);
@@ -96,12 +96,12 @@ void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_P
         if (opcao == 'I' || opcao == 'i') {
             preco_total = totalAssentos * atof(rota.preco + 2);
         } else if (opcao == 'M' || opcao == 'm') {
-            printf("       Necess·rio comprovaÁ„o de benefÌcio\n");
+            printf("       Necess√°rio comprova√ß√£o de benef√≠cio\n");
             preco_total = totalAssentos * (atof(rota.preco + 2) / 2); 
         } else {
-            printf("       OpÁ„o inv·lida! Pressione qualquer tecla para continuar.\n");
+            printf("       Op√ß√£o inv√°lida! Pressione qualquer tecla para continuar.\n");
             _getch();
-            return; // Retorna ‡ funÁ„o detalhesDaCompra
+            return; // Retorna √† fun√ß√£o detalhesDaCompra
         }
 
         system(CLEAR);
@@ -111,7 +111,7 @@ void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_P
         setColor(9);
         printf("%s\n", rota.data);
         setColor(15);
-        printf("       Hor·rio: ");
+        printf("       Hor√°rio: ");
         setColor(9);
         printf("%s\n", rota.horario);
         setColor(15);
@@ -121,7 +121,7 @@ void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_P
             printf("       - %s\n", assentosEscolhidos[i]);
         }
         setColor(15);
-        printf("\n       PreÁo Total: ");
+        printf("\n       Pre√ßo Total: ");
         setColor(10);
         printf("R$ %.2f\n", preco_total);
         setColor(15);
@@ -129,22 +129,21 @@ void finalizarCompra(int totalAssentos, Rota rota, char assentosEscolhidos[MAX_P
         printf("       Confirma compra? (S/N): ");
         scanf(" %c", &opcao);
         if (opcao == 'S' || opcao == 's') {
-            geracaoNotaFiscal(rota, preco_total, nome, cpf);
+            geracaoNotaFiscal(rota, preco_total, nome, cpf, assentosEscolhidos, totalAssentos);
             printf("\n       Compra confirmada! Pressione qualquer tecla para continuar.\n");
             _getch();
-            break; // Sai do loop apÛs a confirmaÁ„o da compra
+            break; // Sai do loop ap√≥s a confirma√ß√£o da compra
         } else { // Compra cancelada
             printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
 
             // Liberar os assentos selecionados
             for (int i = 0; i < totalAssentos; i++) {
-                int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para Ìndice
-                int coluna = assentosEscolhidos[i][2] - '1'; // Converter n˙mero da coluna para Ìndice
+                int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para √≠ndice
+                int coluna = assentosEscolhidos[i][2] - '1'; // Converter n√∫mero da coluna para √≠ndice
                 sprintf(assentos[linha][coluna], "%c-%d", LETRAS[linha], coluna + 1); // Reverter para o estado original
             }
 
             _getch();
-            break;
         }
     } 
 }
@@ -155,7 +154,7 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
     printf("\n ============= DETALHES DA COMPRA =============\n\n");
     printf("       Rota: %s -> %s\n", rota.origem, rota.destino);
     printf("       Data: %s\n", rota.data);
-    printf("       Hor·rio: %s\n", rota.horario);
+    printf("       Hor√°rio: %s\n", rota.horario);
     printf("\n       Assentos Selecionados:\n\n");
     for (i = 0; i < totalAssentos; i++) {
         setColor(13);
@@ -184,15 +183,21 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
                 printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
                 // Liberar os assentos selecionados
             	for (int i = 0; i < totalAssentos; i++) {
-                	int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para Ìndice
-                	int coluna = assentosEscolhidos[i][2] - '1'; // Converter n˙mero da coluna para Ìndice
+                	int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para √≠ndice
+                	int coluna = assentosEscolhidos[i][2] - '1'; // Converter n√∫mero da coluna para √≠ndice
                 	sprintf(assentos[linha][coluna], "%c-%d", LETRAS[linha], coluna + 1); // Reverter para o estado original
             	}
                 _getch();
                 return 0; 
             }
         } else {
-            printf("\n       Cliente n„o encontrado.\n\nPressione qualquer tecla para continuar...\n");
+            printf("\n       Cliente n√£o encontrado.\n\nPressione qualquer tecla para continuar...\n");
+            // Liberar os assentos selecionados
+            for (int i = 0; i < totalAssentos; i++) {
+                int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para √≠ndice
+                int coluna = assentosEscolhidos[i][2] - '1'; // Converter n√∫mero da coluna para √≠ndice
+                sprintf(assentos[linha][coluna], "%c-%d", LETRAS[linha], coluna + 1); // Reverter para o estado original
+            }
             _getch(); 
         }
     } else if (resposta == 'N' || resposta == 'n') {
@@ -210,8 +215,8 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
                 printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
                 // Liberar os assentos selecionados
             	for (int i = 0; i < totalAssentos; i++) {
-                	int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para Ìndice
-                	int coluna = assentosEscolhidos[i][2] - '1'; // Converter n˙mero da coluna para Ìndice
+                	int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para √≠ndice
+                	int coluna = assentosEscolhidos[i][2] - '1'; // Converter n√∫mero da coluna para √≠ndice
                 	sprintf(assentos[linha][coluna], "%c-%d", LETRAS[linha], coluna + 1); // Reverter para o estado original
             	}
                 _getch();
@@ -220,7 +225,7 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
         } else {
             system("cls");
             struct cliente cliente_temp; 
-            printf("\n ============= INFORMA«’ES DO CLIENTE =============\n\n");
+            printf("\n ============= INFORMA√á√ïES DO CLIENTE =============\n\n");
             printf("       Nome: ");
             fflush(stdin);
             fgets(cliente_temp.nome, 50, stdin);
@@ -236,8 +241,8 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
                 printf("\n       Compra cancelada! Voltando ao Menu Principal...\n");
                 // Liberar os assentos selecionados
             	for (int i = 0; i < totalAssentos; i++) {
-                	int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para Ìndice
-                	int coluna = assentosEscolhidos[i][2] - '1'; // Converter n˙mero da coluna para Ìndice
+                	int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para √≠ndice
+                	int coluna = assentosEscolhidos[i][2] - '1'; // Converter n√∫mero da coluna para √≠ndice
                 	sprintf(assentos[linha][coluna], "%c-%d", LETRAS[linha], coluna + 1); // Reverter para o estado original
             	}
                 _getch();
@@ -245,9 +250,14 @@ int detalhesDaCompra(char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssento
             }
         }
     } else {
-        printf("       Resposta inv·lida! Pressione qualquer tecla para continuar.\n");
+        printf("       Resposta inv√°lida! Pressione qualquer tecla para continuar.\n");
+        // Liberar os assentos selecionados
+        for (int i = 0; i < totalAssentos; i++) {
+            int linha = assentosEscolhidos[i][0] - 'A'; // Converter letra da linha para √≠ndice
+            int coluna = assentosEscolhidos[i][2] - '1'; // Converter n√∫mero da coluna para √≠ndice
+            sprintf(assentos[linha][coluna], "%c-%d", LETRAS[linha], coluna + 1); // Reverter para o estado original
+        }
         _getch();
     }
-    return 0; // Finaliza a funÁ„o
+    return 0; // Finaliza a fun√ß√£o
 }
-
