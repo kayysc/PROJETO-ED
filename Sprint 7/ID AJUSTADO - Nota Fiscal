@@ -1,0 +1,92 @@
+// codigo notafiscal.c ...
+
+// Salvar os IDs no arquivo
+void salvarUltimoID(int id) {
+    FILE *file = fopen("ultimoID.txt", "w");
+    if (file) {
+        fprintf(file, "%d", id);
+        fclose(file);
+    } else {
+        printf("Erro ao salvar o último ID.\n");
+    }
+}
+
+// Carregar os IDs do arquivo
+int carregarUltimoID() {
+    FILE *file = fopen("ultimoID.txt", "r");
+    int id = 1000; // Valor padrão
+    if (file) {
+        fscanf(file, "%d", &id);
+        fclose(file);
+    } else {
+        printf("Arquivo não encontrado, usando ID padrão.\n");
+    }
+    return id;
+}
+
+int gerarNotaID() {
+    static int ultimoID = 0; // Inicializa como 0
+    if (ultimoID == 0) { // Verifica se ainda não foi carregado
+        ultimoID = carregarUltimoID();
+    }
+    return ++ultimoID;
+}
+
+void geracaoNotaFiscal(Rota rota, int preco_total, const char *nome, const char *cpf, char assentosEscolhidos[MAX_PASSAGENS][5], int totalAssentos) {
+    system("cls");
+
+    struct Nota *aux = (struct Nota *)malloc(sizeof(struct Nota));
+
+    strcpy(aux->origem, rota.origem);
+    strcpy(aux->destino, rota.destino);
+    strcpy(aux->horario, rota.horario);
+    strcpy(aux->data, rota.data);
+    strcpy(aux->nome, nome);
+    strcpy(aux->cpf, cpf);
+    aux->preco = preco_total;
+
+    // Copia os assentos para a nota fiscal
+    for (i = 0; i < totalAssentos; i++) {
+        strcpy(aux->assentos[i], assentosEscolhidos[i]);
+    }
+
+    aux->notaFiscal = gerarNotaID();
+    aux->prox_Nota = notasfiscais;
+    notasfiscais = aux;
+    
+    // Salva o último ID após gerar a nota
+    salvarUltimoID(aux->notaFiscal);
+
+    // Salva as notas fiscais após gerar a nova nota
+    salvarNotasFiscais("notasfiscais.dat");
+
+    // Exibe todas as informações da nota fiscal
+    printf("\n ============= NOTAS FISCAIS =============\n\n");
+    printf("       Nota Fiscal ID: %d\n", aux->notaFiscal);
+    printf("       Nome: %s\n", aux->nome);
+    printf("       CPF: %s\n", aux->cpf);
+    printf("       Origem: %s\n", aux->origem);
+    printf("       Destino: %s\n", aux->destino);
+    printf("       Data: ");
+    setColor(9);
+    printf("%s\n", aux->data);
+    setColor(15);
+    printf("       Horário: ");
+    setColor(9);
+    printf("%s\n", aux->horario);
+    setColor(15);
+    printf("       Preço Total: ");
+    setColor(10);
+    printf("R$ %.2f\n", (float)aux->preco);
+    setColor(15);
+    // Exibe os assentos da compra
+    printf("       Assentos: ");
+    for (i = 0; i < totalAssentos; i++) {
+        printf("%s ", aux->assentos[i]);
+    }
+    printf("\n");
+
+    printf("\n ==========================================\n");
+}
+
+// restante do codigo...
