@@ -1,0 +1,8 @@
+- Sistemas de pesquisa, filtros e passagens rápidas;
+- Login do usuário(se não tiver);
+- Sistema de Feedback de embarcações;
+- Sistema de Verificação de dados;
+- CRUD usuário e perfil;
+- Empresa e perfil;
+
+Scrum Master: Gustavo Nunes

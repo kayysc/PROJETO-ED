@@ -1,0 +1,6 @@
+- Colocar o módulo de assentos em arquivo;
+- Integração do salvamento de notas fiscais por meio de arquivos .dat;
+- Cancelamento de compras (por CPF e por ID)
+- Modularização em projeto;
+
+Scrum Master: CARLOS EDUARDO;

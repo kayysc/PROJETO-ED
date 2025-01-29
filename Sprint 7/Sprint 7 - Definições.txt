@@ -1,0 +1,15 @@
+- Resolução da incongruência Cancelamento da Compra - Nota Fiscal -Assentos;
+- Resolução da incongruência dos preços (inteira ou meia);
+- Validação de CPF, condição de data;
+- Modo Transparência:
+	* Passo 1 - Ações dos Funcionários; 
+	- Armazenamento dos dados; 
+	- Integração com a interface do Menu Gerente;
+- Relatório Financeiro: 
+	- Adaptação da struct NotaFiscal e inserção do código do funcionário que está realizando uma venda;
+ 	- Criação do menu, junto com a funcionalidade de geração de relatórios (utilizando a biblioteca libharu) no Menu Gerente; 
+	- Implementação dos filtros;
+	- Confecção do README (Scrum Master);
+	- Splash Screen (Opcional);
+
+Scrum Master: GABRIEL FERNANDES

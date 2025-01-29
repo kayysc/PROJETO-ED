@@ -1,0 +1,16 @@
+- Estudo para confecção do GTK interface;
+- Escolha de trajetos e definição de tamanhos de barcos, e quantos
+barcos estão a disposição e relacionar o barco com os trajetos (destino mais procurados =
+barco maiores);
+- Estrutura de dados aplicado no CRUD;
+- Funções de funcionário cadastrar os cliente e embarcação;
+- Sistema identificação do barco (cadastrar o numero de assentos);
+- Slides e Daily Scrum;
+- Adicionar função dos funcionário e da embarcação (Decidir as ED);
+- Criptografia da senha e armazenar na memoria;
+- Padrão de iniciação começar criando um login e senha padrão;
+- Cadastrar funcionário e gerente (autorizar somente pelo gerente já cadastrado
+no sistema);
+- Criptografia, cadastro;
+
+Scrum Master: YASMIM PESSOA DA FROTA

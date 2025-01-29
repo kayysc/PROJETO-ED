@@ -1,0 +1,9 @@
+- Unidade estética em toda a aplicação;
+- Modularização das funções genéricas;
+- Aprimoramento visual (experiência do usuário);
+- Definir arduíno para o sistema (começo, meio e fim);
+- Analisar CRUD (caso esteja fragmentado, unificar);
+- Implementar burocratização acerca dos preços (definir limite de idade para cortesia, acessibilidade para idosos e pessoas com deficiência);
+- Finalização do módulo Seleção de Assentos;- Confecção do README (Scrum Master);
+
+Scrum Master: GABRIEL FERNANDES
