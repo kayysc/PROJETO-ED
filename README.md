@@ -3,22 +3,6 @@
 <img loading="lazy" src="http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge"/>
 </p>
 
-# SUMÁRIO 
-
-* [Quem Somos Nós](#quem-somos-nós) </p>
-* [Por Que Escolher o Banzeiro?](#por-que-escolher-o-banzeiro)</p>
-* [Índice](#índice)</p>
-* [Descrição do Projeto](#descrição-do-projeto)</p>
-* [Status do Projeto](#status-do-Projeto)</p>
-* [Funcionalidades e Demonstração da Aplicação](#funcionalidades-e-demonstração-da-aplicação)</p>
-* [Acesso ao Projeto](#acesso-ao-projeto)</p>
-* [Tecnologias utilizadas](#tecnologias-utilizadas)</p>
-* [Pessoas Contribuidoras](#pessoas-contribuidoras)</p>
-* [Pessoas Desenvolvedoras do Projeto](#pessoas-desenvolvedoras)</p>
-* [Licença](#licença)</p>
-* [Conclusão](#conclusão)</p>
-
-
 # :nerd_face: QUEM SOMOS NÓS
 
 * Somos um grupo de estudantes comprometidos com a criação de soluções tecnológicas que realmente façam a diferença. Este trabalho foi inicialmente proposto por nosso professor, que desafiou toda a turma a desenvolver um programa voltado para alguma realidade local. Inspirados por nossa cidade natal, Manaus, tivemos a ideia de criar um sistema para facilitar e organizar as viagens fluviais no porto de Manaus, uma atividade essencial para a vida e a cultura da nossa região. Nosso objetivo é valorizar essa realidade, oferecendo uma solução prática, eficiente e acessível para os usuários.
@@ -77,5 +61,5 @@ Feito isso e gerado o executável, inicie o programa!!!
 * **Orientado por:** Emmerson Santa Rita;
 * **Devs discentes:**
 
-| [<img src="https://imgur.com/akxr4hz" width=115><br><sub>Diana Regina</sub>](https://github.com/Diana-ops) |  [<img src="https://avatars2.githubusercontent.com/u/46378210?s=400&u=071f7791bb03f8e102d835bdb9c2f0d3d24e8a34&v=4" width=115><br><sub>Diana Regina</sub>](https://github.com/Diana-ops) |  [<img src="https://avatars2.githubusercontent.com/u/46378210?s=400&u=071f7791bb03f8e102d835bdb9c2f0d3d24e8a34&v=4" width=115><br><sub>Diana Regina</sub>](https://github.com/Diana-ops) |
-| :---: | :---: | :---: 
+| <img src="https://github.com/user-attachments/assets/5f111e4c-1937-45b0-8ebb-db802f8744f4" width=115><br><sub>Yasmim Pessoa</sub> |  <img src="https://github.com/user-attachments/assets/9ae7d79f-95b9-4109-bea0-cfafd346cabd" width=115><br><sub>Adriano Melo</sub> |  <img src="https://github.com/user-attachments/assets/f9763529-d86b-4a47-bbfe-7cba7e1f3661" width=115><br><sub>Kayo Serrão</sub> | <img src="https://github.com/user-attachments/assets/41c14ea1-598b-4fae-acea-a6be7da0e52c" width=115><br><sub>Carlos Souza</sub> |  <img src="https://github.com/user-attachments/assets/da38c7b2-d906-47e6-98dc-ed1019ecfc12" width=115><br><sub>Gustavo Nunes</sub> |  <img src="https://github.com/user-attachments/assets/10da9496-316b-43bd-a517-efc246fc7dcf" width=115><br><sub>Gabriel Fernandes</sub> |
+| :---: | :---: | :---: | :---: | :---: | :---:
